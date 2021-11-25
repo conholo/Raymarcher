@@ -34,7 +34,7 @@ namespace RM
 
 		enum class FoldDirection { None, Right, Up, Forward, Left, Down, Back };
 
-		FoldPlane(FoldDirection direction, float factor)
+		FoldPlane(FoldDirection direction = FoldDirection::None, float factor = 0.0f)
 			:m_Direction(direction), m_Factor(factor) { }
 
 		std::string TransformationToGLSL() const override;

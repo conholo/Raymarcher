@@ -60,6 +60,9 @@ namespace RM
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		bool showDemo = true;
+		ImGui::ShowDemoWindow(&showDemo);
 	}
 
 	void ImGuiLayer::End()

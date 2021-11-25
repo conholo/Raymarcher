@@ -19,6 +19,7 @@ namespace RM
 	public:
 		ColorModZero() = default;
 		std::string ColorModToGLSL() const override;
+		static std::string ToString() { return "ColorModZero"; }
 	};
 
 	class ColorModInfinity : public ColorMod
@@ -26,6 +27,7 @@ namespace RM
 	public:
 		ColorModInfinity() = default;
 		std::string ColorModToGLSL() const override;
+		static std::string ToString() { return "ColorModInfinity"; }
 	};
 
 	class ColorModNegativeInfinity : public ColorMod
@@ -33,6 +35,7 @@ namespace RM
 	public:
 		ColorModNegativeInfinity() = default;
 		std::string ColorModToGLSL() const override;
+		static std::string ToString() { return "ColorModNegativeInfinity"; }
 	};
 
 	class ColorModSum : public ColorMod
@@ -41,6 +44,10 @@ namespace RM
 		ColorModSum(const glm::vec3& scale = glm::vec3(1.0f), const glm::vec3& origin = glm::vec3(0.0f))
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
+
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModSum"; }
 
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);
@@ -53,6 +60,10 @@ namespace RM
 		ColorModSumAbs(const glm::vec3& scale = glm::vec3(1.0f), const glm::vec3& origin = glm::vec3(0.0f))
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
+
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModSumAbs"; }
 
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);
@@ -67,6 +78,10 @@ namespace RM
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
 
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModMin"; }
+
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);
 		glm::vec3 m_Origin = glm::vec3(0.0f);
@@ -78,6 +93,10 @@ namespace RM
 		ColorModMinAbs(const glm::vec3& scale = glm::vec3(1.0f), const glm::vec3& origin = glm::vec3(0.0f))
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
+
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModMinAbs"; }
 
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);
@@ -91,6 +110,10 @@ namespace RM
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
 
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModMax"; }
+
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);
 		glm::vec3 m_Origin = glm::vec3(0.0f);
@@ -102,6 +125,10 @@ namespace RM
 		ColorModMaxAbs(const glm::vec3& scale = glm::vec3(1.0f), const glm::vec3& origin = glm::vec3(0.0f))
 			:m_Scale(scale), m_Origin(origin) { }
 		std::string ColorModToGLSL() const override;
+
+		glm::vec3& GetScale() { return m_Scale; }
+		glm::vec3& GetOrigin() { return m_Origin; }
+		static std::string ToString() { return "ColorModMaxAbs"; }
 
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f);

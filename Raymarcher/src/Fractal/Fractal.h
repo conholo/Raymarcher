@@ -16,6 +16,7 @@ namespace RM
 		const Ref<IGLSLConvertable>& operator[](uint32_t index) { return m_Transformations[index]; }
 
 		std::string Compile();
+		std::string GetName() const { return m_Name; }
 
 	private:
 		std::string m_Name;

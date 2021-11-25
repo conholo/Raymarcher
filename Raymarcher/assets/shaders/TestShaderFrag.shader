@@ -110,7 +110,7 @@ void RotationZFold(inout vec4 z, float s, float c)
 
 float CalculateSoftShadow(vec4 rayOrigin, vec3 rayDirection, float minT, float maxT)
 {
-	float volume = (0.8 - rayOrigin.y) / rayOrigin.y;
+	float volume = (0.8 - rayOrigin.y) / rayDirection.y;
 	if (volume > 0.0)
 		maxT = min(maxT, volume);
 
@@ -182,11 +182,13 @@ vec3 CalculateNormal(vec4 p, float dx)
 vec4 Scene(vec4 origin, vec4 ray, float vignette, float totalDistance)
 {
 	vec4 position = origin;
-	vec4 marchResult = RayMarch(position, ray, vignette, totalDistance);
+	vec4 marchResult = RayMarch(position, ray, 100.0, totalDistance);
 	float dist = marchResult.x;
 	float steps = marchResult.y;
 	totalDistance = marchResult.z;
 	float closest = marchResult.w;
+
+	vec3 backgroundColor = vec3(0.7, 0.7, 0.9) - max(ray.y, 0.0) * 0.3;
 
 	vec3 color = vec3(0.0);
 	float minDistance = MIN_DISTANCE * max(totalDistance * 30.0, 1.0);
@@ -196,6 +198,7 @@ vec4 Scene(vec4 origin, vec4 ray, float vignette, float totalDistance)
 	if (dist < minDistance)
 	{
 		vec3 originalColor = clamp(CE_TestFractal(position).xyz, 0.0, 1.0);
+
 		vec3 normal = CalculateNormal(position, MIN_DISTANCE * 10.0);
 		vec3 reflected = reflect(ray.xyz, normal);
 
@@ -204,24 +207,47 @@ vec4 Scene(vec4 origin, vec4 ray, float vignette, float totalDistance)
 		vec3 light = normalize(vec3(-0.5, 0.4, -0.6));
 		vec3 halfVector = normalize(light - ray.xyz);
 
-		float diffuse = max(dot(normal, light), 0.0);
-		diffuse *= CalculateSoftShadow(position, light, 0.02, 2.5);
-		float specular = pow(max(dot(halfVector, normal), 0.0), 32.0f * 32.0f);
-		specular *= diffuse;
-		specular *= 0.04 + 0.96 * pow(clamp(1.0 - dot(halfVector, light), 0.0, 1.0), 5.0);
-
-		color += originalColor * lightColor * 2.20 * diffuse * vec3(1.30, 1.00, 0.70);
-		color += 5.0 * specular * vec3(1.30, 1.00, 0.70) * k;
-
-
-		float aoDiffuse = max(dot(normal, light), 0.0) * clamp(1.0 - position.y, 0.0, 1.0);
 		float ambientOcclusion = CalculateAO(position, normal);
-		aoDiffuse *= ambientOcclusion;
-		color += 0.55 * aoDiffuse * vec3(0.19, 0.19, 0.19);
+
+		{
+			float diffuse = max(dot(normal, light), 0.0);
+			diffuse *= CalculateSoftShadow(position, light, 0.02, 2.5);
+
+			float specular = pow(max(dot(halfVector, normal), 0.0), 4.0f * 4.0f);
+			specular *= diffuse;
+			specular *= 0.04 + 0.96 * pow(clamp(1.0 - dot(halfVector, light), 0.0, 1.0), 5.0);
+
+			color += originalColor * lightColor * 2.20 * diffuse * vec3(1.30, 1.00, 0.70);
+			color += 5.0 * specular * vec3(1.30, 1.00, 0.70) * k;
+		}
+
+		{
+			float diffuse = sqrt(clamp(0.5 + 0.5 * normal.y, 0.0, 1.0));
+			diffuse *= ambientOcclusion;
+			float specular = smoothstep(-0.2, 0.2, reflected.y);
+			specular *= diffuse;
+			specular *= 0.04 + 0.96 * pow(clamp(1.0 + dot(normal, vec3(ray.xyz)), 0.0, 1.0), 5.0);
+			specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
+
+			color += color * 0.60 * diffuse * vec3(0.40, 0.60, 1.15);
+			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) * k;
+		}
+
+		{
+			float diffuse = pow(clamp(1.0 + dot(normal, ray.xyz), 0.0, 1.0), 2.0);
+			diffuse *= ambientOcclusion;
+			color += color * 0.25 * diffuse * vec3(1.00, 1.00, 1.00);
+		}
+
+		float fog = totalDistance / MAX_DISTANCE;
+		color = (1.0 - fog) * color + fog * vec3(0.5f, 0.5f, 0.5f);
+
+		color *= vignette;
 	}
 	else
 	{
-		color = vec3(0.5f, 0.5f, 0.5f);
+		color = backgroundColor;
+		color += (1.0 - closest) * (1.0 - closest) * vec3(-0.2, 0.5, -0.2);
 	}
 
 	color = pow(color, vec3(0.8585));
@@ -254,7 +280,15 @@ void main()
 	
 	vec3 rayDirection = cameraView * normalize(vec3(uv, focalDistance));
 
-	vec4 sceneColor = Scene(vec4(u_CameraPosition, 1.0), vec4(rayDirection, 0.0), 10.0, 0.0);
+	const float VIGNETTE_STRENGTH = 0.5;
+
+	float vignette = 1.0 - 0.1f * length(uv);
+
+	vec4 sceneColor = Scene(vec4(u_CameraPosition, 1.0), vec4(rayDirection, 0.0), vignette, 0.0);
+
+	const float EXPOSURE = 1.1f;
+
+	sceneColor.rgb = clamp(sceneColor.rgb * EXPOSURE, 0.0, 1.0);
 
 	o_Color = vec4(sceneColor.xyz, 1.0);
 }

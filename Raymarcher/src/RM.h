@@ -33,3 +33,6 @@
 #include "Fractal/Fractal.h"
 #include "Fractal/IGLSLConvertable.h"
 
+#include "UI/FractalManagerUI.h"
+#include "UI/FractalViewerUI.h"
+
