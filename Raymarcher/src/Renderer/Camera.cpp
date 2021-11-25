@@ -1,6 +1,7 @@
 #include "rmpch.h"
 #include "Renderer/Camera.h"
 #include "Event/WindowEvent.h"
+#include "Event/KeyEvent.h"
 #include "Core/Input.h"
 #include "Core/Utility.h"
 #include "Core/Application.h"
@@ -16,6 +17,7 @@ namespace RM
 	Camera::Camera(float fov, float aspectRatio, float nearClip, float farClip)
 		:m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
 	{
+		m_CurrentPanSpeed = m_PanSpeed;
 		m_Position = CalculatePosition();
 
 		glm::quat orientation = CalculateOrientation();
@@ -50,6 +52,7 @@ namespace RM
 		m_Pitch = 0.0f;
 		m_Yaw = 0.0f;
 		m_OrthographicRotation = 0.0f;
+		m_OrthographicRotation = 0.0f;
 		m_PositionDelta = glm::vec3(0.0f);
 		m_Position = { 0.0f, 0.0f, 10.0f };
 	}
@@ -73,6 +76,15 @@ namespace RM
 		return m_FocalPoint - Forward() * m_DistanceFromFocalPoint + m_PositionDelta;
 	}
 
+	float Camera::GetZoomSpeed() const
+	{
+		float distance = m_DistanceFromFocalPoint * 0.2f;
+		distance = std::max(distance, 0.0f);
+		float speed = distance * distance;
+		speed = std::min(speed, 100.0f);
+		return speed;
+	}
+
 	void Camera::UpdatePerspective(float deltaTime)
 	{
 		const glm::vec2 mousePosition = Input::GetMousePosition();
@@ -80,6 +92,8 @@ namespace RM
 
 		if (Input::IsMouseButtonPressed(2) || Input::IsMouseButtonPressed(1))
 		{
+			m_CurrentPanSpeed = Input::IsKeyPressed(Key::LeftShift) ? m_PanSpeed * 5.0f : m_PanSpeed;
+
 			if (Input::IsKeyPressed(Key::LeftAlt))
 			{
 				// Reset Rotation
@@ -90,9 +104,9 @@ namespace RM
 			{
 				// Fly forward/back
 				if (Input::IsKeyPressed(Key::W))
-					m_PositionDelta += Forward() * m_PanSpeed * deltaTime;
+					m_PositionDelta += Forward() * m_CurrentPanSpeed * deltaTime;
 				if (Input::IsKeyPressed(Key::S))
-					m_PositionDelta -= Forward() * m_PanSpeed * deltaTime;
+					m_PositionDelta -= Forward() * m_CurrentPanSpeed * deltaTime;
 
 				// Pitch/Yaw adjustment from mouse pan
 				const float yawSign = Up().y < 0.0f ? -1.0f : 1.0f;
@@ -104,16 +118,16 @@ namespace RM
 		{
 			// Fly up/down
 			if (Input::IsKeyPressed(Key::W))
-				m_PositionDelta += Up() * m_PanSpeed * deltaTime;
+				m_PositionDelta += Up() * m_CurrentPanSpeed * deltaTime;
 			if (Input::IsKeyPressed(Key::S))
-				m_PositionDelta -= Up() * m_PanSpeed * deltaTime;
+				m_PositionDelta -= Up() * m_CurrentPanSpeed * deltaTime;
 		}
 
 		// Fly left/right
 		if (Input::IsKeyPressed(Key::A))
-			m_PositionDelta -= Right() * m_PanSpeed * deltaTime;
+			m_PositionDelta -= Right() * m_CurrentPanSpeed * deltaTime;
 		if (Input::IsKeyPressed(Key::D))
-			m_PositionDelta += Right() * m_PanSpeed * deltaTime;
+			m_PositionDelta += Right() * m_CurrentPanSpeed * deltaTime;
 
 
 		m_Position += m_PositionDelta;
@@ -269,7 +283,7 @@ namespace RM
 
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_DistanceFromFocalPoint -= event.GetYOffset();
+			m_DistanceFromFocalPoint -= event.GetYOffset() * GetZoomSpeed();
 			m_Position = m_FocalPoint - Forward() * m_DistanceFromFocalPoint;
 
 			if (m_DistanceFromFocalPoint > 1.0f)
@@ -278,7 +292,7 @@ namespace RM
 				m_DistanceFromFocalPoint = 1.0f;
 			}
 
-			m_PositionDelta += event.GetYOffset() * Forward();
+			m_PositionDelta += event.GetYOffset() * GetZoomSpeed() * Forward();
 
 			RecalculatePerspectiveView();
 		}

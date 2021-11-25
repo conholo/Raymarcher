@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/VertexArray.h"
+#include "Renderer/Camera.h"
 
 namespace RM
 {
@@ -8,7 +9,7 @@ namespace RM
 	{
 	public:
 		static void Initialize();
-		static void DrawFullScreenQuad(const std::string& shader);
+		static void DrawFullScreenQuad(const std::string& shader, const Camera& camera);
 
 	private:
 		static Ref<VertexArray> s_VAO;

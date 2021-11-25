@@ -42,7 +42,7 @@ namespace RM
 		s_VAO->EnableVertexAttributes(s_VBO);
 	}
 
-	void Renderer::DrawFullScreenQuad(const std::string& shader)
+	void Renderer::DrawFullScreenQuad(const std::string& shader, const Camera& camera)
 	{
 		s_VAO->Bind();
 		ShaderLibrary::Get(shader)->Bind();
@@ -52,6 +52,9 @@ namespace RM
 		ShaderLibrary::Get(shader)->UploadUniformFloat("u_DeltaTime", Time::DeltaTime());
 		ShaderLibrary::Get(shader)->UploadUniformFloat2("u_ScreenResolution", screenResolution);
 		ShaderLibrary::Get(shader)->UploadUniformFloat2("u_MousePosition", mousePosition);
+		ShaderLibrary::Get(shader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjection());
+		ShaderLibrary::Get(shader)->UploadUniformFloat3("u_CameraPosition", camera.GetPosition());
+		ShaderLibrary::Get(shader)->UploadUniformFloat3("u_CameraForward", camera.Forward());
 		RenderCommand::DrawIndexed(s_VAO);
 		s_VAO->Unbind();
 	}

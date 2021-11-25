@@ -6,16 +6,23 @@
 
 namespace RM
 {
-	Shader::Shader(const std::string& filePath)
+	Shader::Shader(const std::string& filePath, const std::string& injection)
 	{
 		size_t shaderLocationOffset = filePath.rfind("\/") + 1;
 		size_t extensionOffset = filePath.find_first_of(".", shaderLocationOffset);
 
 		m_Name = filePath.substr(shaderLocationOffset, extensionOffset - shaderLocationOffset);
 
-		std::string source = ReadFile(filePath);
-		auto shaderSources = PreProcess(source);
-		Compile(shaderSources);
+		std::string fragmentSource = ReadFile(filePath);
+		std::string vertexSource = ReadFile(m_VertFilePath);
+		
+		Inject(fragmentSource, injection);
+
+		std::ofstream outFile("assets/shaders/Debug/DebugFrag.shader");
+		outFile << fragmentSource + "\n";
+		outFile.close();
+
+		Compile(fragmentSource, vertexSource);
 	}
 
 	Shader::~Shader()
@@ -54,98 +61,55 @@ namespace RM
 		return result;
 	}
 
-	GLenum ShaderTypeFromString(const std::string& type)
+	void Shader::Inject(std::string& fragmentSource, const std::string& injection)
 	{
-		if (type == "vertex")
-			return GL_VERTEX_SHADER;
-		else if (type == "fragment")
-			return GL_FRAGMENT_SHADER;
-		else if (type == "compute")
-			return GL_COMPUTE_SHADER;
+		std::string result;
+		
+		size_t tokenSize = strlen("//DE/CE Begin");
+		size_t cursor = fragmentSource.find("//DE/CE Begin");
 
-		return GL_FALSE;
+		fragmentSource.insert(cursor + tokenSize + 1, "\n\n" + injection);
 	}
 
-	std::unordered_map<GLenum, std::string> Shader::PreProcess(const std::string& source)
+	GLint Shader::CompileShader(ShaderType type, const std::string& source, GLuint program)
 	{
-		const char* typeToken = "#type";
-		size_t typeTokenLength = strlen(typeToken);
-		size_t position = source.find(typeToken, 0);
+		GLuint shader = glCreateShader(type == ShaderType::Fragment ? GL_FRAGMENT_SHADER : GL_VERTEX_SHADER);
 
-		std::unordered_map<GLenum, std::string> result;
+		const GLchar* sourceCStr = source.c_str();
+		glShaderSource(shader, 1, &sourceCStr, 0);
+		glCompileShader(shader);
 
-		while (position != std::string::npos)
+		GLint isCompiled = 0;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
 		{
-			size_t endOfLine = source.find_first_of("\r\n", position);
-			size_t beginShaderType = position + typeTokenLength + 1;
-			std::string type = source.substr(beginShaderType, endOfLine - beginShaderType);
+			GLint maxLength = 0;
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-			size_t nextLinePosition = source.find_first_not_of("\r\n", endOfLine);
-			position = source.find(typeToken, nextLinePosition);
-			result[ShaderTypeFromString(type)] =
-				(position == std::string::npos)
-				? source.substr(nextLinePosition)
-				: source.substr(nextLinePosition, position - nextLinePosition);
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+
+			std::string errorHeader = type == ShaderType::Fragment ? "FRAGMENT COMPILATION ERROR" : "VERTEX COMPILATION ERROR";
+			std::stringstream ss;
+			ss << m_Name << ":\n" << errorHeader << infoLog.data();
+			std::cout << ss.str() << "\n";
+
+			glDeleteShader(shader);
+			return -1;
 		}
 
-		return result;
+		glAttachShader(program, shader);
+
+		return shader;
 	}
 
-	void Shader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
+	void Shader::Compile(const std::string& fragmentSource, const std::string& vertexSource)
 	{
 		GLuint program = glCreateProgram();
-		std::vector<GLuint> shaderIDs;
-		int glShaderIDIndex = 0;
 
-		for (auto& kv : shaderSources)
-		{
-			GLenum type = kv.first;
-			m_IsCompute = type == GL_COMPUTE_SHADER;
-			const std::string& source = kv.second;
-
-			GLuint shader = glCreateShader(type);
-
-			const GLchar* sourceCStr = source.c_str();
-			glShaderSource(shader, 1, &sourceCStr, 0);
-
-			glCompileShader(shader);
-
-			GLint isCompiled = 0;
-			glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-			if (isCompiled == GL_FALSE)
-			{
-				GLint maxLength = 0;
-				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-				std::vector<GLchar> infoLog(maxLength);
-				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
-
-				std::stringstream ss;
-
-				std::string type;
-
-				if (shader == GL_FRAGMENT_SHADER)
-					type = "FRAGMENT COMPILATION ERROR";
-				else if (shader == GL_VERTEX_SHADER)
-					type = "VERTEX COMPILATION ERROR: ";
-				else if (shader == GL_COMPUTE_SHADER)
-					type = "COMPUTE COMPILATION ERROR: ";
-
-				ss << m_Name << ":\n" << type << infoLog.data();
-
-				std::cout << ss.str() << "\n";
-
-				glDeleteShader(shader);
-
-				break;
-			}
-
-			glAttachShader(program, shader);
-			shaderIDs.push_back(shader);
-		}
-
+		GLint vertexShader = CompileShader(ShaderType::Vertex, vertexSource, program);
+		GLint fragmentShader = CompileShader(ShaderType::Fragment, fragmentSource, program);
 		m_ID = program;
-
 		glLinkProgram(program);
 
 		GLint isLinked = 0;
@@ -159,26 +123,20 @@ namespace RM
 			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
 			std::stringstream ss;
-
-			std::string messageHeader = m_Name + ": LINKING ERROR: ";
-
+			std::string messageHeader = m_Name + ": LINKING ERROR:\n";
 			ss << messageHeader << infoLog.data();
-
 			std::cout << ss.str() << "\n";
 
 			glDeleteProgram(program);
-
-			for (auto id : shaderIDs)
-				glDeleteShader(id);
-
+			glDeleteShader(vertexShader);
+			glDeleteShader(fragmentShader);
 			return;
 		}
 
-		for (auto id : shaderIDs)
-		{
-			glDetachShader(program, id);
-			glDeleteShader(id);
-		}
+		glDetachShader(program, vertexShader);
+		glDetachShader(program, fragmentShader);
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
 	}
 
 	GLint Shader::UploadUniformFloat(const std::string& name, float value)
@@ -280,10 +238,10 @@ namespace RM
 		}
 	}
 
-	void ShaderLibrary::Load(const std::string& shaderName)
+	void ShaderLibrary::Load(const std::string& shaderName, const std::string& injection)
 	{
 		const std::string shaderPath = "assets/shaders/" + shaderName + ".shader";
-		Ref<Shader> shader = CreateRef<Shader>(shaderPath);
+		Ref<Shader> shader = CreateRef<Shader>(shaderPath, injection);
 		Add(shader);
 	}
 

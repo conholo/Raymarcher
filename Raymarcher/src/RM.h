@@ -24,3 +24,12 @@
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/RenderCommand.h"
+
+#include "Fractal/FractalGeometry.h"
+#include "Fractal/ColorMods/ColorMod.h"
+#include "Fractal/Folds/Folds.h"
+
+#include "Fractal/FractalUtility.h"
+#include "Fractal/Fractal.h"
+#include "Fractal/IGLSLConvertable.h"
+

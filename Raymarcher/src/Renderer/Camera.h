@@ -31,7 +31,7 @@ namespace RM
 
 		void Orbit(const glm::vec3& eyePosition, const glm::vec3& target, const glm::vec3& angleAxisDegrees);
 
-
+		void SetPanSpeed(float speed) { m_PanSpeed = speed; m_CurrentPanSpeed = m_PanSpeed; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculatePerspectiveView(); }
 		void SetRotation(const glm::vec2& rotation);
 
@@ -55,6 +55,7 @@ namespace RM
 		glm::quat CalculateOrientation() const;
 		glm::vec3 CalculatePosition() const;
 
+		float GetZoomSpeed() const;
 		void UpdatePerspective(float deltaTime);
 		void UpdateOrthographic(float deltaTime);
 		void RecalculatePerspectiveView();
@@ -71,6 +72,7 @@ namespace RM
 		bool m_IsLocked = false;
 		bool m_OrthographicRotationEnabled = true;
 		float m_PanSpeed = 3.0f;
+		float m_CurrentPanSpeed = 3.0f;
 		float m_OrthoTranslationSpeed = 1.0f;
 		float m_RotationSpeed = 50.0f;
 

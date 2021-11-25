@@ -6,13 +6,16 @@
 
 typedef unsigned int GLenum;
 typedef int GLint;
+typedef unsigned int GLuint;
 
 namespace RM
 {
+	enum class ShaderType { Vertex, Fragment };
+
 	class Shader
 	{
 	public:
-		Shader(const std::string& filePath);
+		Shader(const std::string& filePath, const std::string& injection = "");
 		~Shader();
 
 		void Bind() const;
@@ -40,10 +43,12 @@ namespace RM
 	private:
 		bool m_IsCompute = false;
 		std::string ReadFile(const std::string& filePath);
-		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
-		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+		void Inject(std::string& source, const std::string& injection);
+		void Compile(const std::string& fragmentSource, const std::string& vertexSource);
+		GLint CompileShader(ShaderType type, const std::string& source, GLuint program);
 
 	private:
+		const std::string m_VertFilePath = "assets/shaders/vert.shader";
 		std::string m_Name;
 		uint32_t m_ID;
 	};
@@ -53,7 +58,7 @@ namespace RM
 	{
 	public:
 		static void Add(const Ref<Shader>& shader);
-		static void Load(const std::string& shaderName);
+		static void Load(const std::string& shaderName, const std::string& injection = "");
 
 		static const Ref<Shader>& Get(const std::string& name);
 
