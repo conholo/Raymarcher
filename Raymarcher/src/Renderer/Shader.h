@@ -57,8 +57,10 @@ namespace RM
 	class ShaderLibrary
 	{
 	public:
+		static bool Has(const std::string& shaderName);
 		static void Add(const Ref<Shader>& shader);
 		static void Load(const std::string& shaderName, const std::string& injection = "");
+		static void Recompile(const std::string& shaderName, const std::string& injection);
 
 		static const Ref<Shader>& Get(const std::string& name);
 

@@ -1,5 +1,6 @@
 #include "rmpch.h"
 #include "UI/FractalManagerUI.h"
+#include "Renderer/Shader.h"
 
 #include <imgui/imgui.h>
 
@@ -72,6 +73,19 @@ namespace RM
 
 				ImGui::TreePop();
 			}
+		}
+
+		std::vector<FractalCompileData> FractalManagerUI::GetReadyFractals()
+		{
+			std::vector<FractalCompileData> readyFractalData;
+			for (auto viewer : s_Views)
+			{
+				if (!viewer->CanCompile()) continue;
+				FractalCompileData data = { viewer->GetFractal(), viewer->GetBegin(), viewer->GetEnd(), viewer->GetIterations() };
+				readyFractalData.push_back(data);
+			}
+
+			return readyFractalData;
 		}
 	}
 }

@@ -226,6 +226,11 @@ namespace RM
 
 	std::unordered_map<std::string, Ref<Shader>> ShaderLibrary::s_ShaderLibrary;
 
+	bool ShaderLibrary::Has(const std::string& shaderName)
+	{
+		return s_ShaderLibrary.find(shaderName) != s_ShaderLibrary.end();
+	}
+
 	void ShaderLibrary::Add(const Ref<Shader>& shader)
 	{
 		if (s_ShaderLibrary.find(shader->GetName()) == s_ShaderLibrary.end())
@@ -245,11 +250,20 @@ namespace RM
 		Add(shader);
 	}
 
+	void ShaderLibrary::Recompile(const std::string& shaderName, const std::string& injection)
+	{
+		if (!Has(shaderName)) return;
+
+		const std::string shaderPath = "assets/shaders/" + shaderName + ".shader";
+		Ref<Shader> shader = CreateRef<Shader>(shaderPath, injection);
+		s_ShaderLibrary[shader->GetName()] = shader;
+	}
+
 	const Ref<Shader>& ShaderLibrary::Get(const std::string& name)
 	{
 		if (s_ShaderLibrary.find(name) == s_ShaderLibrary.end())
 		{
-			std::cout << "No shader with name:( " << name << ") found in Shader Library." << "\n";
+			//std::cout << "No shader with name:( " << name << ") found in Shader Library." << "\n";
 			return nullptr;
 		}
 

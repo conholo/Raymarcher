@@ -13,8 +13,8 @@ namespace RM
 			std::string scaleID = "Scale##" + fractalName + title;
 			ImGui::PushID(originID.c_str());
 			ImGui::PushID(scaleID.c_str());
-			ImGui::DragFloat3("Origin", dragFloatA);
-			ImGui::DragFloat3("Scale", dragFloatB);
+			ImGui::DragFloat3(originID.c_str(), dragFloatA);
+			ImGui::DragFloat3(scaleID.c_str(), dragFloatB);
 			ImGui::PopID();
 			ImGui::PopID();
 		}

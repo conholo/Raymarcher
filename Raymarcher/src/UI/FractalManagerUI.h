@@ -7,6 +7,14 @@ namespace RM
 {
 	namespace UI
 	{
+		struct FractalCompileData
+		{
+			Ref<Fractal> Fractal;
+			uint32_t Begin;
+			uint32_t End;
+			uint32_t Iterations;
+		};
+
 		class FractalManagerUI
 		{
 		public:
@@ -16,6 +24,7 @@ namespace RM
 			static void DeleteFractal();
 
 			static void DrawFractalUI();
+			static std::vector<FractalCompileData> GetReadyFractals();
 
 		private:
 			static bool s_EditorOpen;

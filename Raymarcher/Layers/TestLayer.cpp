@@ -181,10 +181,9 @@ static RM::Fractal AlienCube()
 void TestLayer::OnAttach()
 {
 	m_Camera.SetPanSpeed(0.1f);
-	RM::Fractal fractal = Mausoleum();
-
-	std::string injection = fractal.Compile();
-	RM::ShaderLibrary::Load("TestShaderFrag", injection);
+	RM::Fractal fractal = ButterweedHills();
+	//std::string injection = fractal.Compile();
+	//RM::ShaderLibrary::Load("TestShaderFrag", injection);
 }
 
 void TestLayer::OnDetach()
@@ -195,6 +194,10 @@ void TestLayer::OnDetach()
 void TestLayer::OnUpdate(float deltaTime)
 {
 	m_Camera.Update(deltaTime);
+
+	RM::RenderCommand::Clear();
+	if (!RM::ShaderLibrary::Has("TestShaderFrag")) return;
+
 	RM::Renderer::DrawFullScreenQuad("TestShaderFrag", m_Camera);
 }
 
@@ -208,5 +211,19 @@ void TestLayer::OnImGuiRender()
 	ImGui::Begin("Fractals");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	RM::UI::FractalManagerUI::DrawFractalUI();
+
+	std::vector<RM::UI::FractalCompileData> readyFractalData = RM::UI::FractalManagerUI::GetReadyFractals();
+
+	for (auto data : readyFractalData)
+	{
+		if (ImGui::Button("Run Fractal"))
+		{
+			std::string injection = data.Fractal->CompileProcedural(data.Begin, data.End, data.Iterations);
+			if (RM::ShaderLibrary::Has("TestShaderFrag"))
+				RM::ShaderLibrary::Recompile("TestShaderFrag", injection);
+			else
+				RM::ShaderLibrary::Load("TestShaderFrag", injection);
+		}
+	}
 	ImGui::End();
 }

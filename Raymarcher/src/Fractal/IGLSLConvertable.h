@@ -19,13 +19,15 @@ namespace RM
 		virtual std::string ColorToGLSL() const = 0;
 		virtual std::string ColorModToGLSL() const = 0;
 
+		ColorType& GetColorType() { return m_ColorType; }
+		glm::vec3& GetColor() { return m_Color; }
 
 		ColorType GetColorType() const { return m_ColorType; }
 		AttributeType GetAttributeType() const { return m_AttributeType; }
 		const glm::vec3& GetColor() const { return m_Color; }
 
 	protected:
-		ColorType m_ColorType = ColorType::None;
+		ColorType m_ColorType = ColorType::ColorMod;
 		AttributeType m_AttributeType = AttributeType::None;
 		glm::vec3 m_Color = glm::vec3(1.0f);
 	};

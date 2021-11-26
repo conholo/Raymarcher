@@ -2,6 +2,7 @@
 
 #include "UI/FractalComponentEditorUI.h"
 #include "Fractal/ColorMods/ColorMod.h"
+#include "Fractal/IGLSLConvertable.h"
 
 #include <glm/glm.hpp>s
 
@@ -15,47 +16,60 @@ namespace RM
 			ColorModUI(const std::string& componentName, uint32_t id)
 				:FractalComponentEditorUI(componentName, id) { }
 			virtual ~ColorModUI() = default;
-			std::unordered_map<std::string, float*> GetVector3Fields() { return m_Vector3Fields; }
-			bool IsInitializer() const { return  m_Vector3Fields.size() <= 0; }
-			virtual void DrawEditor(const std::string& fractalName) = 0;
 
-		protected:
-			std::unordered_map<std::string, float*> m_Vector3Fields;
+			virtual Ref<IGLSLConvertable> GetConvertable() = 0;
+			virtual void DrawEditor(const std::string& fractalName) = 0;
 		};
 
 		class ColorModZeroUI : public ColorModUI
 		{
 		public:
-			ColorModZeroUI(uint32_t id)
-				:ColorModUI(ColorModZero::ToString(), id) {}
+			ColorModZeroUI(uint32_t id, const Ref<ColorModZero>& colorModZero)
+				:ColorModUI(ColorModZero::ToString(), id), m_ColorModZero(colorModZero) {}
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModZero>(); }
+
 			void DrawEditor(const std::string& fractalName) override {}
+
+		private:
+			Ref<ColorModZero> m_ColorModZero;
 		};
 
 		class ColorModInfinityUI : public ColorModUI
 		{
 		public:
-			ColorModInfinityUI(uint32_t id)
-				:ColorModUI(ColorModInfinity::ToString(), id) { }
+			ColorModInfinityUI(uint32_t id, const Ref<ColorModInfinity>& colorModInfinity)
+				:ColorModUI(ColorModInfinity::ToString(), id), m_ColorModInfinity(colorModInfinity) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModInfinity>(); }
+
 			void DrawEditor(const std::string& fractalName) override {}
+
+		private:
+			Ref<ColorModInfinity> m_ColorModInfinity;
 		};
 
 		class ColorModNegativeInfinityUI : public ColorModUI
 		{
 		public:
-			ColorModNegativeInfinityUI(uint32_t id)
-				:ColorModUI(ColorModNegativeInfinity::ToString(), id) { }
+			ColorModNegativeInfinityUI(uint32_t id, const Ref<ColorModNegativeInfinity>& negativeInfinity)
+				:ColorModUI(ColorModNegativeInfinity::ToString(), id), m_ColorModNegativeInfinity(negativeInfinity) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModNegativeInfinity>(); }
+
 			void DrawEditor(const std::string& fractalName) override {}
+
+		private:
+			Ref<ColorModNegativeInfinity> m_ColorModNegativeInfinity;
 		};
 
 		class ColorModSumUI : public ColorModUI
 		{
 		public:
 			ColorModSumUI(uint32_t id, const Ref<ColorModSum>& colorModSum)
-				:ColorModUI(ColorModSum::ToString(), id), m_ColorModSum(colorModSum)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModSum->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModSum->GetOrigin().x;
-			}
+				:ColorModUI(ColorModSum::ToString(), id), m_ColorModSum(colorModSum) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModSum>(m_ColorModSum->GetScale(), m_ColorModSum->GetOrigin()); }
 
 			void DrawEditor(const std::string& fractalName) override;
 
@@ -67,11 +81,9 @@ namespace RM
 		{
 		public:
 			ColorModSumAbsUI(uint32_t id, const Ref<ColorModSumAbs> colorModSumAbs)
-				:ColorModUI(ColorModSumAbs::ToString(), id), m_ColorModSumAbs(colorModSumAbs)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModSumAbs->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModSumAbs->GetOrigin().x;
-			}
+				:ColorModUI(ColorModSumAbs::ToString(), id), m_ColorModSumAbs(colorModSumAbs) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModSumAbs>(m_ColorModSumAbs->GetScale(), m_ColorModSumAbs->GetOrigin()); }
 
 			void DrawEditor(const std::string& fractalName) override;
 
@@ -84,11 +96,9 @@ namespace RM
 		{
 		public:
 			ColorModMinUI(uint32_t id, const Ref<ColorModMin>& colorModMin)
-				:ColorModUI(ColorModMin::ToString(), id), m_ColorModMin(colorModMin)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModMin->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModMin->GetOrigin().x;
-			}
+				:ColorModUI(ColorModMin::ToString(), id), m_ColorModMin(colorModMin) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModMin>(m_ColorModMin->GetScale(), m_ColorModMin->GetOrigin()); }
 
 			void DrawEditor(const std::string& fractalName) override;
 
@@ -100,11 +110,9 @@ namespace RM
 		{
 		public:
 			ColorModMinAbsUI(uint32_t id, const Ref<ColorModMinAbs>& colorModMinAbs)
-				:ColorModUI(ColorModMinAbs::ToString(), id), m_ColorModMinAbs(colorModMinAbs)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModMinAbs->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModMinAbs->GetOrigin().x;
-			}
+				:ColorModUI(ColorModMinAbs::ToString(), id), m_ColorModMinAbs(colorModMinAbs) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModMinAbs>(m_ColorModMinAbs->GetScale(), m_ColorModMinAbs->GetOrigin());; }
 
 			void DrawEditor(const std::string& fractalName) override;
 
@@ -116,11 +124,9 @@ namespace RM
 		{
 		public:
 			ColorModMaxUI(uint32_t id, const Ref<ColorModMax>& colorModMax)
-				:ColorModUI(ColorModMax::ToString(), id), m_ColorModMax(colorModMax)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModMax->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModMax->GetOrigin().x;
-			}
+				:ColorModUI(ColorModMax::ToString(), id), m_ColorModMax(colorModMax) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModMax>(m_ColorModMax->GetScale(), m_ColorModMax->GetOrigin());; }
 
 			void DrawEditor(const std::string& fractalName) override;
 
@@ -132,11 +138,9 @@ namespace RM
 		{
 		public:
 			ColorModMaxAbsUI(uint32_t id, const Ref<ColorModMaxAbs>& colorModMaxAbs)
-				:ColorModUI(ColorModMaxAbs::ToString(), id), m_ColorModMaxAbs(colorModMaxAbs)
-			{
-				m_Vector3Fields["Scale"] = &m_ColorModMaxAbs->GetScale().x;
-				m_Vector3Fields["Origin"] = &m_ColorModMaxAbs->GetOrigin().x;
-			}
+				:ColorModUI(ColorModMaxAbs::ToString(), id), m_ColorModMaxAbs(colorModMaxAbs) { }
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<ColorModMaxAbs>(m_ColorModMaxAbs->GetScale(), m_ColorModMaxAbs->GetOrigin());; }
 
 			void DrawEditor(const std::string& fractalName) override;
 
