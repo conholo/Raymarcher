@@ -1,0 +1,32 @@
+Fractal: TheLorax
+Iteration Data:
+  Begin: 1
+  End: 6
+  Iterations: 30
+Transformations:
+  - Type: ColorModInfinity
+  - Type: FoldRotateY
+    Fields:
+      Radians: 0.436332315
+  - Type: FoldAbs
+    Fields:
+      Center: [0, 0, 0]
+  - Type: FoldMenger
+  - Type: ColorModMinAbs
+    Fields:
+      Scale: [0.25, 2.27999997, 7.5999999]
+      Origin: [0, 0, 0]
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 1.29999995
+      Translation: [-2, -4.80000019, 0]
+  - Type: FoldPlane
+    Fields:
+      Factor: 0
+      Direction: 6
+  - Type: Box
+    Fields:
+      Scale: [10, 10, 10]
+      Offset: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

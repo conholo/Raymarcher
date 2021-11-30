@@ -1,0 +1,175 @@
+Fractal: AlienCube
+Iteration Data:
+  Begin: 0
+  End: 0
+  Iterations: 0
+Transformations:
+  - Type: ColorModZero
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: FoldBox
+    Fields:
+      Range: [0.100000001, 0.300000012, 0.100000001]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [0.5, 0.300000012, 0.5]
+  - Type: FoldBox
+    Fields:
+      Range: [1, 1, 1]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.00999999978, 0.400000006, 0.800000012]
+      Origin: [0, 0, 0]
+  - Type: Sphere
+    Fields:
+      Radius: 1
+      Center: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

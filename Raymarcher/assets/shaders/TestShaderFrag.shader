@@ -6,17 +6,22 @@ uniform float u_ElapsedTime;
 uniform float u_DeltaTime;
 uniform vec2 u_ScreenResolution;
 uniform vec2 u_MousePosition;
-uniform mat4 u_ViewProjection;
+uniform mat4 u_InverseView;
 uniform vec3 u_CameraPosition;
 uniform vec3 u_CameraForward;
 
 #define PI 3.14159265359
-#define MAX_MARCHES 1000.0
-#define MIN_DISTANCE 0.00001
-#define MAX_DISTANCE 50.0
+
+float Random(float s, float minV, float maxV)
+{
+	float r = sin(s * s * 27.12345 + 1000.9876 / (s * s + 1e-5));
+	return (r + 1.0) * 0.5 * (maxV - minV) + minV;
+}
 
 
+//Defines
 
+//Defines
 
 //##########################################
 //   Distance Estimators
@@ -110,7 +115,7 @@ void RotationZFold(inout vec4 z, float s, float c)
 
 float CalculateSoftShadow(vec4 rayOrigin, vec3 rayDirection, float minT, float maxT)
 {
-	float volume = (0.8 - rayOrigin.y) / rayDirection.y;
+	float volume = (SHADOW_DARKNESS - rayOrigin.y) / rayDirection.y;
 	if (volume > 0.0)
 		maxT = min(maxT, volume);
 
@@ -119,8 +124,8 @@ float CalculateSoftShadow(vec4 rayOrigin, vec3 rayDirection, float minT, float m
 
 	for (int i = 0; i < 24; i++)
 	{
-		float h = DE_TestFractal(rayOrigin + vec4(rayDirection, 0.0) * t);
-		float s = clamp(8.0 * h / t, 0.0, 1.0);
+		float h = DE(rayOrigin + vec4(rayDirection, 0.0) * t);
+		float s = clamp(SHADOW_SHARPNESS * h / t, 0.0, 1.0);
 		result = min(result, s * s * (3.0 - 2.0 * s));
 		t += clamp(h, 0.02, 0.2);
 		if (result < 0.004 || t > maxT) break;
@@ -135,8 +140,8 @@ float CalculateAO(vec4 position, vec3 normal)
 	float scale = 1.0f;
 	for (int i = 0; i < 5; i++)
 	{
-		float h = 0.01 + 0.12 * float(i) / 4.0;
-		float dist = DE_TestFractal(position + h * vec4(normal, 1.0));
+		float h = AO_STRENGTH + 0.12 * float(i) / 4.0;
+		float dist = DE(position + h * vec4(normal, 1.0));
 		occlusion += (h - dist) * scale;
 		scale *= 0.95;
 		if (occlusion > 0.35) break;
@@ -145,14 +150,14 @@ float CalculateAO(vec4 position, vec3 normal)
 	return clamp(1.0 - 3.0 * occlusion, 0.0, 1.0) * (0.5 + 0.5 * normal.y);
 }
 
-vec4 RayMarch(inout vec4 position, vec4 ray, float sharpness, float totalDistance)
+vec4 RayMarch(inout vec4 position, inout vec4 ray, float sharpness, float totalDistance)
 {
 	float dist = MIN_DISTANCE;
 	float s = 0.0;
 	float closestDistance = 1.0;
 	for (; s < MAX_MARCHES; s += 1.0)
 	{
-		dist = DE_TestFractal(position);
+		dist = DE(position);
 		if (dist < MIN_DISTANCE)
 		{
 			s += dist / MIN_DISTANCE;
@@ -165,6 +170,7 @@ vec4 RayMarch(inout vec4 position, vec4 ray, float sharpness, float totalDistanc
 		position += ray * dist;
 		closestDistance = min(closestDistance, sharpness * dist / totalDistance);
 	}
+
 	return vec4(dist, s, totalDistance, closestDistance);
 }
 
@@ -172,46 +178,72 @@ vec4 RayMarch(inout vec4 position, vec4 ray, float sharpness, float totalDistanc
 vec3 CalculateNormal(vec4 p, float dx)
 {
 	const vec3 k = vec3(1, -1, 0);
-	return normalize(k.xyy * DE_TestFractal(p + k.xyyz * dx) +
-		k.yyx * DE_TestFractal(p + k.yyxz * dx) +
-		k.yxy * DE_TestFractal(p + k.yxyz * dx) +
-		k.xxx * DE_TestFractal(p + k.xxxz * dx));
+	return normalize(k.xyy * DE(p + k.xyyz * dx) +
+		k.yyx * DE(p + k.yyxz * dx) +
+		k.yxy * DE(p + k.yxyz * dx) +
+		k.xxx * DE(p + k.xxxz * dx));
 }
 
 
-vec4 Scene(vec4 origin, vec4 ray, float vignette, float totalDistance)
+vec3 ACESTonemap(vec3 color)
+{
+	mat3 m1 = mat3(
+		0.59719, 0.07600, 0.02840,
+		0.35458, 0.90834, 0.13383,
+		0.04823, 0.01566, 0.83777
+	);
+	mat3 m2 = mat3(
+		1.60475, -0.10208, -0.00327,
+		-0.53108, 1.10813, -0.07276,
+		-0.07367, -0.00605, 1.07602
+	);
+	vec3 v = m1 * color;
+	vec3 a = v * (v + 0.0245786) - 0.000090537;
+	vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+	return clamp(m2 * (a / b), 0.0, 1.0);
+}
+
+vec3 GammaCorrect(vec3 color)
+{
+	return pow(color, vec3(1.0 / GAMMA_CORRECTION));
+}
+
+vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 {
 	vec4 position = origin;
-	vec4 marchResult = RayMarch(position, ray, 100.0, totalDistance);
+	vec4 marchResult = RayMarch(position, ray, GLOW_SHARPNESS, totalDistance);
 	float dist = marchResult.x;
 	float steps = marchResult.y;
 	totalDistance = marchResult.z;
 	float closest = marchResult.w;
 
-	vec3 backgroundColor = vec3(0.7, 0.7, 0.9) - max(ray.y, 0.0) * 0.3;
+	vec3 backgroundColor = BG_COLOR - max(ray.y, 0.0) * 0.3;
 
 	vec3 color = vec3(0.0);
-	float minDistance = MIN_DISTANCE * max(totalDistance * 30.0, 1.0);
+	float minDistance = MIN_DISTANCE * max(totalDistance * LOD_MULTIPLIER, 1.0);
 
-	vec3 lightColor = vec3(1.0, 1.0, 1.0);
+	vec3 lightColor = LIGHT_COLOR;
+
+	vec3 light = normalize(vec3(-0.5, 0.4, -0.6));
 
 	if (dist < minDistance)
 	{
-		vec3 originalColor = clamp(CE_TestFractal(position).xyz, 0.0, 1.0);
+		vec3 originalColor = clamp(CE(position).xyz, 0.0, 1.0);
 
 		vec3 normal = CalculateNormal(position, MIN_DISTANCE * 10.0);
 		vec3 reflected = reflect(ray.xyz, normal);
 
 		float k = 1.0;
 
-		vec3 light = normalize(vec3(-0.5, 0.4, -0.6));
 		vec3 halfVector = normalize(light - ray.xyz);
 
 		float ambientOcclusion = CalculateAO(position, normal);
 
 		{
 			float diffuse = max(dot(normal, light), 0.0);
+#if SHADOWS_ENABLED
 			diffuse *= CalculateSoftShadow(position, light, 0.02, 2.5);
+#endif
 
 			float specular = pow(max(dot(halfVector, normal), 0.0), 4.0f * 4.0f);
 			specular *= diffuse;
@@ -227,68 +259,68 @@ vec4 Scene(vec4 origin, vec4 ray, float vignette, float totalDistance)
 			float specular = smoothstep(-0.2, 0.2, reflected.y);
 			specular *= diffuse;
 			specular *= 0.04 + 0.96 * pow(clamp(1.0 + dot(normal, vec3(ray.xyz)), 0.0, 1.0), 5.0);
-			specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
 
+#if SHADOWS_ENABLED
+			specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
+#endif
 			color += color * 0.60 * diffuse * vec3(0.40, 0.60, 1.15);
 			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) * k;
 		}
 
+		//sss
 		{
 			float diffuse = pow(clamp(1.0 + dot(normal, ray.xyz), 0.0, 1.0), 2.0);
 			diffuse *= ambientOcclusion;
 			color += color * 0.25 * diffuse * vec3(1.00, 1.00, 1.00);
 		}
 
+#if FOG_ENABLED
 		float fog = totalDistance / MAX_DISTANCE;
 		color = (1.0 - fog) * color + fog * vec3(0.5f, 0.5f, 0.5f);
-
+#endif
 		color *= vignette;
+
+		color *= EXPOSURE;
+		color = ACESTonemap(color);
+		color = GammaCorrect(color);
 	}
 	else
 	{
 		color = backgroundColor;
-		color += (1.0 - closest) * (1.0 - closest) * vec3(-0.2, 0.5, -0.2);
+
+#if GLOW_ENABLED
+		color += (1.0 - closest) * (1.0 - closest) * GLOW_COLOR_DELTA;
+#endif
+
+#if SUN_ENABLED
+		float sunSpecular = dot(ray.xyz, light) - 1.0 + SUN_SIZE;
+		sunSpecular = min(exp(sunSpecular * SUN_SHARPNESS / SUN_SIZE), 1.0);
+		color += LIGHT_COLOR * sunSpecular;
+#endif
 	}
 
-	color = pow(color, vec3(0.8585));
 	return vec4(color, totalDistance);
-}
-
-mat3 SetCameraView(vec3 cameraPosition, vec3 target, float cr)
-{
-	vec3 cw = normalize(target - cameraPosition);
-	vec3 cp = vec3(sin(cr), cos(cr), 0.0);
-	vec3 cu = normalize(cross(cw, cp));
-	vec3 cv = cross(cu, cw);
-	return mat3(cu, cv, cw);
 }
 
 void main()
 {
-	vec2 uv = (2.0 * gl_FragCoord.xy - u_ScreenResolution) / u_ScreenResolution.y;
 	vec2 mouse = u_MousePosition / u_ScreenResolution;
-
-
-	float focalDistance = 1.0 / tan(PI * 45.0f / 360.0f);
-
+	vec4 color = vec4(0.0);
 	float time = u_ElapsedTime * 5.0;
+	float focalDistance = 1.0 / tan(PI * FOV / 360.0f);
 
-	vec3 target = vec3(0.0f, 0.0f, 0.0f);
-	//vec3 cameraPosition = target + vec3(12.0 * cos(0.1 * time + mouse.x * 5.0), 5.0 + mouse.y * 5.0, 12.0 * sin(0.1 * time + mouse.x * 5.0));
-	mat3 cameraView = SetCameraView(u_CameraPosition, u_CameraPosition + u_CameraForward, 0.0);
-	const float focalLength = 8.0f;
-	
-	vec3 rayDirection = cameraView * normalize(vec3(uv, focalDistance));
+	vec2 screenPosition = gl_FragCoord.xy / u_ScreenResolution.xy;
+	vec2 uv = 2.0 * screenPosition - 1.0;
+	uv.x *= u_ScreenResolution.x / u_ScreenResolution.y;
 
-	const float VIGNETTE_STRENGTH = 0.5;
 
+	vec4 position = vec4(u_CameraPosition, 1.0);
+	vec4 ray = normalize(vec4(uv, -focalDistance, 0.0));
+	ray = u_InverseView * normalize(ray * DOF_DISTANCE);
 	float vignette = 1.0 - 0.1f * length(uv);
 
-	vec4 sceneColor = Scene(vec4(u_CameraPosition, 1.0), vec4(rayDirection, 0.0), vignette, 0.0);
+	vec4 sceneColor = Scene(position, ray, vignette, 0.0);
+	color += sceneColor;
 
-	const float EXPOSURE = 1.1f;
-
-	sceneColor.rgb = clamp(sceneColor.rgb * EXPOSURE, 0.0, 1.0);
-
-	o_Color = vec4(sceneColor.xyz, 1.0);
+	o_Color = vec4(color.rgb, 1.0);
 }

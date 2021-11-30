@@ -6,7 +6,7 @@
 
 namespace RM
 {
-	Shader::Shader(const std::string& filePath, const std::string& injection)
+	Shader::Shader(const std::string& filePath, const std::string& defineInjection, const std::string& proceduralInjection)
 	{
 		size_t shaderLocationOffset = filePath.rfind("\/") + 1;
 		size_t extensionOffset = filePath.find_first_of(".", shaderLocationOffset);
@@ -16,7 +16,7 @@ namespace RM
 		std::string fragmentSource = ReadFile(filePath);
 		std::string vertexSource = ReadFile(m_VertFilePath);
 		
-		Inject(fragmentSource, injection);
+		Inject(fragmentSource, defineInjection, proceduralInjection);
 
 		std::ofstream outFile("assets/shaders/Debug/DebugFrag.shader");
 		outFile << fragmentSource + "\n";
@@ -61,14 +61,19 @@ namespace RM
 		return result;
 	}
 
-	void Shader::Inject(std::string& fragmentSource, const std::string& injection)
+	void Shader::Inject(std::string& fragmentSource, const std::string& defineInjection, const std::string& proceduralInjection)
 	{
 		std::string result;
 		
-		size_t tokenSize = strlen("//DE/CE Begin");
-		size_t cursor = fragmentSource.find("//DE/CE Begin");
+		size_t defineTokenSize = strlen("//Defines");
+		size_t cursor = fragmentSource.find("//Defines");
 
-		fragmentSource.insert(cursor + tokenSize + 1, "\n\n" + injection);
+		fragmentSource.insert(cursor + defineTokenSize + 1, "\n\n" + defineInjection);
+
+		size_t procTokenSize = strlen("//DE/CE Begin");
+		cursor = fragmentSource.find("//DE/CE Begin");
+
+		fragmentSource.insert(cursor + procTokenSize + 1, "\n\n" + proceduralInjection);
 	}
 
 	GLint Shader::CompileShader(ShaderType type, const std::string& source, GLuint program)
@@ -243,19 +248,19 @@ namespace RM
 		}
 	}
 
-	void ShaderLibrary::Load(const std::string& shaderName, const std::string& injection)
+	void ShaderLibrary::Load(const std::string& shaderName, const std::string& defineInjection, const std::string& proceduralInjection)
 	{
 		const std::string shaderPath = "assets/shaders/" + shaderName + ".shader";
-		Ref<Shader> shader = CreateRef<Shader>(shaderPath, injection);
+		Ref<Shader> shader = CreateRef<Shader>(shaderPath, defineInjection, proceduralInjection);
 		Add(shader);
 	}
 
-	void ShaderLibrary::Recompile(const std::string& shaderName, const std::string& injection)
+	void ShaderLibrary::Recompile(const std::string& shaderName, const std::string& defineInjection, const std::string& proceduralInjection)
 	{
 		if (!Has(shaderName)) return;
 
 		const std::string shaderPath = "assets/shaders/" + shaderName + ".shader";
-		Ref<Shader> shader = CreateRef<Shader>(shaderPath, injection);
+		Ref<Shader> shader = CreateRef<Shader>(shaderPath, defineInjection, proceduralInjection);
 		s_ShaderLibrary[shader->GetName()] = shader;
 	}
 

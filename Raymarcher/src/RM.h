@@ -6,6 +6,7 @@
 #include "Core/Time.h"
 #include "Core/Utility.h"
 #include "Core/Memory.h"
+#include "Core/YAMLUtility.h"
 
 
 #include "Event/Event.h"
@@ -32,6 +33,7 @@
 #include "Fractal/FractalUtility.h"
 #include "Fractal/Fractal.h"
 #include "Fractal/IGLSLConvertable.h"
+#include "Fractal/FractalSerializer.h"
 
 #include "UI/FractalManagerUI.h"
 #include "UI/FractalViewerUI.h"

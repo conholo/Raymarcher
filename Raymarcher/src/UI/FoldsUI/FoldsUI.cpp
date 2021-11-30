@@ -108,5 +108,11 @@ namespace RM
 		{
 			ImGui::DragFloat("Step", &m_Fold->GetStep(), 0.01f);
 		}
+
+		void FoldScaleOriginUI::DrawEditor(const std::string& fractalName)
+		{
+			ImGui::DragFloat("Scale", &m_Fold->GetScale(), 0.01f);
+			ImGui::DragFloat3("Origin", &m_Fold->GetOrigin().x, 0.01f);
+		}
 	}
 }

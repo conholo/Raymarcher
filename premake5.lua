@@ -16,12 +16,14 @@ IncludeDirectories["GLFW"] = "Raymarcher/Dependencies/GLFW/include"
 IncludeDirectories["glad"] = "Raymarcher/Dependencies/glad/include"
 IncludeDirectories["glm"] = "Raymarcher/Dependencies/glm"
 IncludeDirectories["ImGui"] = "Raymarcher/Dependencies/ImGui"
+IncludeDirectories["yaml_cpp"] = "Raymarcher/Dependencies/yaml-cpp/include"
 
 
 group "Dependencies"
 	include "Raymarcher/Dependencies/GLFW"
 	include "Raymarcher/Dependencies/glad"
 	include "Raymarcher/Dependencies/ImGui/imgui"
+	include "Raymarcher/Dependencies/yaml-cpp"
 group ""
 
 project "Raymarcher"
@@ -58,13 +60,16 @@ project "Raymarcher"
 		"%{IncludeDirectories.glad}",
 		"%{IncludeDirectories.glm}",
 		"%{IncludeDirectories.ImGui}",
+		"%{IncludeDirectories.yaml_cpp}",
 	}
 
 	links
 	{
 		"GLFW",
 		"glad",
-		"ImGui"
+		"ImGui",
+		"yaml-cpp",
+		"opengl32.lib"
 	}
 
 	pchheader "rmpch.h"

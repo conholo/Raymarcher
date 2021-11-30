@@ -18,13 +18,11 @@ namespace RM
 		class FractalManagerUI
 		{
 		public:
-
+			static void LoadFromDisk();
 			static void CreateFractal(const std::string& fractalName = "Fractal");
 			static void AddFractal(const Ref<Fractal>& fractal);
 			static void DeleteFractal();
-
 			static void DrawFractalUI();
-			static std::vector<FractalCompileData> GetReadyFractals();
 
 		private:
 			static bool s_EditorOpen;

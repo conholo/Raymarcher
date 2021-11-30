@@ -1,0 +1,29 @@
+Fractal: New
+Iteration Data:
+  Begin: 1
+  End: 5
+  Iterations: 15
+Transformations:
+  - Type: ColorModInfinity
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.30899692
+  - Type: FoldSierpinski
+  - Type: ColorModMinAbs
+    Fields:
+      Scale: [0.800000012, 0.200000003, 0]
+      Origin: [0, 0, 0]
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 1.5
+      Translation: [-3, -1, 0]
+  - Type: FoldPlane
+    Fields:
+      Factor: 0
+      Direction: 6
+  - Type: Tetrahedron
+    Fields:
+      Radius: 3
+      Center: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

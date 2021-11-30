@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include "Core/YAMLUtility.h"
 
 namespace RM
 {
 	enum class ColorType { None = 0, ColorMod, FromVec3Color};
 	enum class AttributeType { None = 0, Geometry, ColorMod, Fold };
+
 
 	class IGLSLConvertable
 	{
@@ -18,6 +20,7 @@ namespace RM
 		virtual std::string TransformationToGLSL() const = 0;
 		virtual std::string ColorToGLSL() const = 0;
 		virtual std::string ColorModToGLSL() const = 0;
+		virtual std::string Name() const = 0;
 
 		ColorType& GetColorType() { return m_ColorType; }
 		glm::vec3& GetColor() { return m_Color; }
@@ -25,6 +28,8 @@ namespace RM
 		ColorType GetColorType() const { return m_ColorType; }
 		AttributeType GetAttributeType() const { return m_AttributeType; }
 		const glm::vec3& GetColor() const { return m_Color; }
+
+		virtual void Serialize(YAML::Emitter& out) = 0;
 
 	protected:
 		ColorType m_ColorType = ColorType::ColorMod;

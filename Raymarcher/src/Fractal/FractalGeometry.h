@@ -1,6 +1,7 @@
 #pragma once
 #include "Fractal/IGLSLConvertable.h"
 #include <glm/glm.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace RM
 {
@@ -12,6 +13,7 @@ namespace RM
 
 		virtual std::string TransformationToGLSL() const = 0;
 		virtual std::string ColorToGLSL() const = 0;
+		virtual std::string Name() const = 0;
 		std::string ColorModToGLSL() const override { return ""; }
 	};
 
@@ -30,6 +32,9 @@ namespace RM
 		glm::vec3& GetOffset() { return m_Offset; }
 
 		static std::string ToString() { return "Box"; }
+		std::string Name() const override { return ToString(); }
+
+		void Serialize(YAML::Emitter& out) override;
 
 	private:
 		glm::vec3 m_Scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -51,6 +56,9 @@ namespace RM
 		float& GetRadius() { return m_Radius; }
 
 		static std::string ToString() { return "Sphere"; }
+		std::string Name() const override { return ToString(); }
+
+		void Serialize(YAML::Emitter& out) override;
 
 	private:
 		float m_Radius = 1.0f;
@@ -72,6 +80,9 @@ namespace RM
 		float& GetRadius() { return m_Radius; }
 
 		static std::string ToString() { return "Tetrahedron"; }
+		std::string Name() const override { return ToString(); }
+
+		void Serialize(YAML::Emitter& out) override;
 
 	private:
 		float m_Radius = 1.0f;

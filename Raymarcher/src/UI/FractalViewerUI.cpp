@@ -13,6 +13,18 @@ namespace RM
 		FractalViewerUI::FractalViewerUI(const Ref<Fractal>& fractal)
 			:m_Fractal(fractal)
 		{
+			if (m_Fractal->Transformations().size() > 0)
+			{
+				for (auto transformation : m_Fractal->Transformations())
+				{
+					AddColorMod(transformation->Name(), transformation);
+					AddFold(transformation->Name(), transformation);
+					AddGeometry(transformation->Name(), transformation);
+				}
+
+				m_Finalized = true;
+			}
+
 			m_ColorModOptions =
 			{
 				ColorModZero::ToString(),
@@ -30,6 +42,7 @@ namespace RM
 			{
 				FoldAbs::ToString(),
 				FoldBox::ToString(),
+				FoldSphere::ToString(),
 				FoldInversion::ToString(),
 				FoldMenger::ToString(),
 				FoldPlane::ToString(),
@@ -41,6 +54,8 @@ namespace RM
 				FoldRotateY::ToString(),
 				FoldRotateZ::ToString(),
 				FoldScaleTranslate::ToString(),
+				FoldScaleOrigin::ToString(),
+				FoldSierpinski::ToString(),
 			};
 
 			m_GeometryOptions =
@@ -69,9 +84,50 @@ namespace RM
 						convertables.push_back(editor->GetConvertable());
 
 					m_Fractal->SetTransformations(convertables);
+					m_Fractal->SetBegin(m_IterationIndexBegin);
+					m_Fractal->SetEnd(m_IterationIndexEnd);
+					m_Fractal->SetIterations(m_IterationCount);
 
 					m_Finalized = true;
 				}
+			}
+
+
+			if (ImGui::TreeNodeEx("Scene Parameters"))
+			{
+				FractalDefines& defines = m_Fractal->GetDefines();
+
+				for (auto boolDefine : defines.BoolDefines())
+				{
+					std::string name = defines.DefineToString(boolDefine.first);
+					bool value = boolDefine.second;
+					ImGui::Checkbox(name.c_str(), &value);
+
+					if (value != boolDefine.second)
+						defines.BoolDefines()[boolDefine.first] = value;
+				}
+
+				for (auto floatDefines : defines.FloatDefines())
+				{
+					std::string name = defines.DefineToString(floatDefines.first);
+					float value = floatDefines.second;
+					ImGui::DragFloat(name.c_str(), &value, 0.01f, -1000.0, 1000.0, "%.5f");
+
+					if (value != floatDefines.second)
+						defines.FloatDefines()[floatDefines.first] = value;
+				}
+
+				for (auto vec3Define : defines.Vec3Defines())
+				{
+					std::string name = defines.DefineToString(vec3Define.first);
+					glm::vec3 value = vec3Define.second;
+					ImGui::DragFloat3(name.c_str(), &value.x, 0.01f);
+
+					if (value != vec3Define.second)
+						defines.Vec3Defines()[vec3Define.first] = value;
+				}
+
+				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNodeEx("Add Component"))
@@ -291,144 +347,214 @@ namespace RM
 			}
 		}
 
-		void FractalViewerUI::AddColorMod(const std::string& name)
+		void FractalViewerUI::AddColorMod(const std::string& name, const Ref<IGLSLConvertable>& convertable)
 		{
 			if (name == ColorModZero::ToString())
 			{
-				Ref<ColorModZeroUI> zeroUI = CreateRef<ColorModZeroUI>(m_ComponentCount++, CreateRef<ColorModZero>());
+				auto reference = std::dynamic_pointer_cast<ColorModZero>(convertable);
+				Ref<ColorModZeroUI> zeroUI = CreateRef<ColorModZeroUI>(m_ComponentCount++, reference == nullptr ? CreateRef<ColorModZero>() : reference);
 				m_ComponentEditors.push_back(zeroUI);
 			}
 			else if (name == ColorModInfinity::ToString())
 			{
-				Ref<ColorModInfinityUI> inifinityUI = CreateRef<ColorModInfinityUI>(m_ComponentCount++, CreateRef<ColorModInfinity>());
+				auto reference = std::dynamic_pointer_cast<ColorModInfinity>(convertable);
+				Ref<ColorModInfinityUI> inifinityUI = CreateRef<ColorModInfinityUI>(m_ComponentCount++, reference == nullptr ? CreateRef<ColorModInfinity>() : reference);
 				m_ComponentEditors.push_back(inifinityUI);
 			}
 			else if (name == ColorModNegativeInfinity::ToString())
 			{
-				Ref<ColorModNegativeInfinityUI> negativeInfinityUI = CreateRef<ColorModNegativeInfinityUI>(m_ComponentCount++, CreateRef<ColorModNegativeInfinity>());
+				auto reference = std::dynamic_pointer_cast<ColorModNegativeInfinity>(convertable);
+				Ref<ColorModNegativeInfinityUI> negativeInfinityUI = CreateRef<ColorModNegativeInfinityUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModNegativeInfinity>() : reference);
 				m_ComponentEditors.push_back(negativeInfinityUI);
 			}
 			else if (name == ColorModSum::ToString())
 			{
-				Ref<ColorModSumUI> sumUI = CreateRef<ColorModSumUI>(m_ComponentCount++, CreateRef<ColorModSum>());
+				auto reference = std::dynamic_pointer_cast<ColorModSum>(convertable);
+				Ref<ColorModSumUI> sumUI = CreateRef<ColorModSumUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModSum>() : reference);
 				m_ComponentEditors.push_back(sumUI);
 			}
 			else if (name == ColorModSumAbs::ToString())
 			{
-				Ref<ColorModSumAbsUI> sumAbsUI = CreateRef<ColorModSumAbsUI>(m_ComponentCount++, CreateRef<ColorModSumAbs>());
+				auto reference = std::dynamic_pointer_cast<ColorModSumAbs>(convertable);
+				Ref<ColorModSumAbsUI> sumAbsUI = CreateRef<ColorModSumAbsUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModSumAbs>() : reference);
 				m_ComponentEditors.push_back(sumAbsUI);
 			}
 			else if (name == ColorModMin::ToString())
 			{
-				Ref<ColorModMinUI> minUI = CreateRef<ColorModMinUI>(m_ComponentCount++, CreateRef<ColorModMin>());
+				auto reference = std::dynamic_pointer_cast<ColorModMin>(convertable);
+				Ref<ColorModMinUI> minUI = CreateRef<ColorModMinUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModMin>() : reference);
 				m_ComponentEditors.push_back(minUI);
 			}
 			else if (name == ColorModMinAbs::ToString())
 			{
-				Ref<ColorModMinAbsUI> minAbsUI = CreateRef<ColorModMinAbsUI>(m_ComponentCount++, CreateRef<ColorModMinAbs>());
+				auto reference = std::dynamic_pointer_cast<ColorModMinAbs>(convertable);
+				Ref<ColorModMinAbsUI> minAbsUI = CreateRef<ColorModMinAbsUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModMinAbs>() : reference);
 				m_ComponentEditors.push_back(minAbsUI);
 			}
 			else if (name == ColorModMax::ToString())
 			{
-				Ref<ColorModMaxUI> maxUI = CreateRef<ColorModMaxUI>(m_ComponentCount++, CreateRef<ColorModMax>());
+				auto reference = std::dynamic_pointer_cast<ColorModMax>(convertable);
+				Ref<ColorModMaxUI> maxUI = CreateRef<ColorModMaxUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModMax>() : reference);
 				m_ComponentEditors.push_back(maxUI);
 			}
 			else if (name == ColorModMaxAbs::ToString())
 			{
-				Ref<ColorModMaxAbsUI> maxAbsUI = CreateRef<ColorModMaxAbsUI>(m_ComponentCount++, CreateRef<ColorModMaxAbs>());
+				auto reference = std::dynamic_pointer_cast<ColorModMaxAbs>(convertable);
+				Ref<ColorModMaxAbsUI> maxAbsUI = CreateRef<ColorModMaxAbsUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<ColorModMaxAbs>() : reference);
 				m_ComponentEditors.push_back(maxAbsUI);
 			}
 
 			s_EditorOpen = false;
 		}
 
-		void FractalViewerUI::AddFold(const std::string& name)
+		void FractalViewerUI::AddFold(const std::string& name, const Ref<IGLSLConvertable>& convertable)
 		{
 			if (name == FoldAbs::ToString())
 			{
-				Ref<FoldAbsUI> fold = CreateRef<FoldAbsUI>(m_ComponentCount++, CreateRef<FoldAbs>());
+				auto reference = std::dynamic_pointer_cast<FoldAbs>(convertable);
+				Ref<FoldAbsUI> fold = CreateRef<FoldAbsUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldAbs>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldBox::ToString())
 			{
-				Ref<FoldBoxUI> fold = CreateRef<FoldBoxUI>(m_ComponentCount++, CreateRef<FoldBox>());
+				auto reference = std::dynamic_pointer_cast<FoldBox>(convertable);
+				Ref<FoldBoxUI> fold = CreateRef<FoldBoxUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldBox>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldInversion::ToString())
 			{
-				Ref<FoldInversionUI> fold = CreateRef<FoldInversionUI>(m_ComponentCount++, CreateRef<FoldInversion>());
+				auto reference = std::dynamic_pointer_cast<FoldInversion>(convertable);
+				Ref<FoldInversionUI> fold = CreateRef<FoldInversionUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldInversion>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldMenger::ToString())
 			{
-				Ref<FoldMengerUI> fold = CreateRef<FoldMengerUI>(m_ComponentCount++, CreateRef<FoldMenger>());
+				auto reference = std::dynamic_pointer_cast<FoldMenger>(convertable);
+				Ref<FoldMengerUI> fold = CreateRef<FoldMengerUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldMenger>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldPlane::ToString())
 			{
-				Ref<FoldPlaneUI> fold = CreateRef<FoldPlaneUI>(m_ComponentCount++, CreateRef<FoldPlane>());
+				auto reference = std::dynamic_pointer_cast<FoldPlane>(convertable);
+				Ref<FoldPlaneUI> fold = CreateRef<FoldPlaneUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldPlane>() : reference);
+				if (reference != nullptr)
+					fold->SetSelectedFoldDirection((int)reference->GetDirection());
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRepeatX::ToString())
 			{
-				Ref<FoldRepeatXUI> fold = CreateRef<FoldRepeatXUI>(m_ComponentCount++, CreateRef<FoldRepeatX>());
+				auto reference = std::dynamic_pointer_cast<FoldRepeatX>(convertable);
+				Ref<FoldRepeatXUI> fold = CreateRef<FoldRepeatXUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRepeatX>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRepeatY::ToString())
 			{
-				Ref<FoldRepeatYUI> fold = CreateRef<FoldRepeatYUI>(m_ComponentCount++, CreateRef<FoldRepeatY>());
+				auto reference = std::dynamic_pointer_cast<FoldRepeatY>(convertable);
+				Ref<FoldRepeatYUI> fold = CreateRef<FoldRepeatYUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRepeatY>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRepeatZ::ToString())
 			{
-				Ref<FoldRepeatZUI> fold = CreateRef<FoldRepeatZUI>(m_ComponentCount++, CreateRef<FoldRepeatZ>());
+				auto reference = std::dynamic_pointer_cast<FoldRepeatZ>(convertable);
+				Ref<FoldRepeatZUI> fold = CreateRef<FoldRepeatZUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRepeatZ>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRepeatXYZ::ToString())
 			{
-				Ref<FoldRepeatXYZUI> fold = CreateRef<FoldRepeatXYZUI>(m_ComponentCount++, CreateRef<FoldRepeatXYZ>());
+				auto reference = std::dynamic_pointer_cast<FoldRepeatXYZ>(convertable);
+				Ref<FoldRepeatXYZUI> fold = CreateRef<FoldRepeatXYZUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRepeatXYZ>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRotateX::ToString())
 			{
-				Ref<FoldRotateXUI> fold = CreateRef<FoldRotateXUI>(m_ComponentCount++, CreateRef<FoldRotateX>());
+				auto reference = std::dynamic_pointer_cast<FoldRotateX>(convertable);
+				Ref<FoldRotateXUI> fold = CreateRef<FoldRotateXUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRotateX>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRotateY::ToString())
 			{
-				Ref<FoldRotateYUI> fold = CreateRef<FoldRotateYUI>(m_ComponentCount++, CreateRef<FoldRotateY>());
+				auto reference = std::dynamic_pointer_cast<FoldRotateY>(convertable);
+				Ref<FoldRotateYUI> fold = CreateRef<FoldRotateYUI>(m_ComponentCount++,
+					reference == nullptr ? CreateRef<FoldRotateY>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldRotateZ::ToString())
 			{
-				Ref<FoldRotateZUI> fold = CreateRef<FoldRotateZUI>(m_ComponentCount++, CreateRef<FoldRotateZ>());
+				auto reference = std::dynamic_pointer_cast<FoldRotateZ>(convertable);
+				Ref<FoldRotateZUI> fold = CreateRef<FoldRotateZUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldRotateZ>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
 			else if (name == FoldScaleTranslate::ToString())
 			{
-				Ref<FoldScaleTranslateUI> fold = CreateRef<FoldScaleTranslateUI>(m_ComponentCount++, CreateRef<FoldScaleTranslate>());
+				auto reference = std::dynamic_pointer_cast<FoldScaleTranslate>(convertable);
+				Ref<FoldScaleTranslateUI> fold = CreateRef<FoldScaleTranslateUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldScaleTranslate>() : reference);
 				m_ComponentEditors.push_back(fold);
 			}
-
+			else if (name == FoldSphere::ToString())
+			{
+				auto reference = std::dynamic_pointer_cast<FoldSphere>(convertable);
+				Ref<FoldSphereUI> fold = CreateRef<FoldSphereUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldSphere>() : reference);
+				m_ComponentEditors.push_back(fold);
+			}
+			else if (name == FoldScaleOrigin::ToString())
+			{
+				auto reference = std::dynamic_pointer_cast<FoldScaleOrigin>(convertable);
+				Ref<FoldScaleOriginUI> fold = CreateRef<FoldScaleOriginUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<FoldScaleOrigin>() : reference);
+				m_ComponentEditors.push_back(fold);
+			}
+			else if (name == FoldSierpinski::ToString())
+			{
+				auto reference = std::dynamic_pointer_cast<FoldSierpinski>(convertable);
+				Ref<FoldSierpinskiUI> fold = CreateRef<FoldSierpinskiUI>(m_ComponentCount++,
+					reference == nullptr ? CreateRef<FoldSierpinski>() : reference);
+				m_ComponentEditors.push_back(fold);
+			}
 
 			s_EditorOpen = false;
 		}
 
-		void FractalViewerUI::AddGeometry(const std::string& name)
+		void FractalViewerUI::AddGeometry(const std::string& name, const Ref<IGLSLConvertable>& convertable)
 		{
 			if (name == Box::ToString())
 			{
-				Ref<FractalGeometryBoxUI> geo = CreateRef<FractalGeometryBoxUI>(m_ComponentCount++, CreateRef<Box>());
+				auto reference = std::dynamic_pointer_cast<Box>(convertable);
+				Ref<FractalGeometryBoxUI> geo = CreateRef<FractalGeometryBoxUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<Box>() : reference);
 				m_ComponentEditors.push_back(geo);
 			}
 			else if (name == Sphere::ToString())
 			{
-				Ref<FractalGeometrySphereUI> geo = CreateRef<FractalGeometrySphereUI>(m_ComponentCount++, CreateRef<Sphere>());
+				auto reference = std::dynamic_pointer_cast<Sphere>(convertable);
+				Ref<FractalGeometrySphereUI> geo = CreateRef<FractalGeometrySphereUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<Sphere>() : reference);
 				m_ComponentEditors.push_back(geo);
 			}
 			else if (name == Tetrahedron::ToString())
 			{
-				Ref<FractalGeometryTetrahedronUI> geo = CreateRef<FractalGeometryTetrahedronUI>(m_ComponentCount++, CreateRef<Tetrahedron>());
+				auto reference = std::dynamic_pointer_cast<Tetrahedron>(convertable);
+				Ref<FractalGeometryTetrahedronUI> geo = CreateRef<FractalGeometryTetrahedronUI>(m_ComponentCount++, 
+					reference == nullptr ? CreateRef<Tetrahedron>() : reference);
 				m_ComponentEditors.push_back(geo);
 			}
 

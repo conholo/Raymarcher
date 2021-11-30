@@ -56,6 +56,7 @@ namespace RM
 		return "\tMengerFold(position);\n";
 	}
 
+
 	std::string FoldSierpinski::TransformationToGLSL() const
 	{
 		return "\SierpinskiFold(position);\n";
@@ -114,5 +115,196 @@ namespace RM
 	std::string FoldRepeatXYZ::TransformationToGLSL() const
 	{
 		return "\tposition.xyz = abs(mod(position.xyz - " + std::to_string(m_Step) + " / 2, " + std::to_string(m_Step) + ") - " + std::to_string(m_Step) + " / 2);\n";
+	}
+
+	std::string FoldScaleOrigin::TransformationToGLSL() const
+	{
+		return "\tposition = position * " + std::to_string(m_Scale) + "; position.w = abs(position.w); position += o;\n";
+	}
+
+	void FoldScaleTranslate::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Scale" << YAML::Value << m_Scale;
+		out << YAML::Key << "Translation" << YAML::Value << m_Translation;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldScaleOrigin::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Scale" << YAML::Value << m_Scale;
+		out << YAML::Key << "Origin" << YAML::Value << m_Origin;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldPlane::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Factor" << YAML::Value << m_Factor;
+		out << YAML::Key << "Direction" << YAML::Value << (int)m_Direction;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldMenger::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::EndMap;
+	}
+
+	void FoldSierpinski::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::EndMap;
+	}
+
+	void FoldBox::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Range" << YAML::Value << m_Range;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldSphere::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Min Radius" << YAML::Value << m_MinRadius;
+		out << YAML::Key << "Max Radius" << YAML::Value << m_MaxRadius;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldAbs::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Center" << YAML::Value << m_Center;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldInversion::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Epsilon" << YAML::Value << m_Epsilon;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRotateX::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Radians" << YAML::Value << m_Radians;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRotateY::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Radians" << YAML::Value << m_Radians;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRotateZ::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Radians" << YAML::Value << m_Radians;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRepeatX::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Step" << YAML::Value << m_Step;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRepeatY::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Step" << YAML::Value << m_Step;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRepeatZ::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Step" << YAML::Value << m_Step;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+	}
+
+	void FoldRepeatXYZ::Serialize(YAML::Emitter& out)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << ToString();
+		out << YAML::Key << "Fields" << YAML::Value << YAML::BeginMap;
+
+		out << YAML::Key << "Step" << YAML::Value << m_Step;
+
+		out << YAML::EndMap;
+		out << YAML::EndMap;
 	}
 }

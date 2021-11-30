@@ -35,12 +35,30 @@ namespace RM
 			Ref<FoldScaleTranslate> m_Fold;
 		};
 
+		class FoldScaleOriginUI : public FoldUI
+		{
+		public:
+			FoldScaleOriginUI(uint32_t id, const Ref<FoldScaleOrigin>& fold)
+				:FoldUI(FoldScaleOrigin::ToString(), id), m_Fold(fold)
+			{
+			}
+
+			void DrawEditor(const std::string& fractalName) override;
+
+			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<FoldScaleOrigin>(m_Fold->GetScale(), m_Fold->GetOrigin()); }
+
+		private:
+			Ref<FoldScaleOrigin> m_Fold;
+		};
+
+
 		class FoldPlaneUI : public FoldUI
 		{
 		public:
 			FoldPlaneUI(uint32_t id, const Ref<FoldPlane>& fold)
 				:FoldUI(FoldPlane::ToString(), id), m_Fold(fold) { }
 
+			void SetSelectedFoldDirection(int direction) { m_SelectedFoldDirection = direction; }
 			void DrawEditor(const std::string& fractalName) override;
 
 			Ref<IGLSLConvertable> GetConvertable() override { return CreateRef<FoldPlane>(m_Fold->GetDirection(), m_Fold->GetFactor()); }

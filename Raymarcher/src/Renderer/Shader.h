@@ -15,7 +15,7 @@ namespace RM
 	class Shader
 	{
 	public:
-		Shader(const std::string& filePath, const std::string& injection = "");
+		Shader(const std::string& filePath, const std::string& defineInjection = "", const std::string& proceduralInjection = "");
 		~Shader();
 
 		void Bind() const;
@@ -43,7 +43,7 @@ namespace RM
 	private:
 		bool m_IsCompute = false;
 		std::string ReadFile(const std::string& filePath);
-		void Inject(std::string& source, const std::string& injection);
+		void Inject(std::string& source, const std::string& defineInjection, const std::string& proceduralInjection);
 		void Compile(const std::string& fragmentSource, const std::string& vertexSource);
 		GLint CompileShader(ShaderType type, const std::string& source, GLuint program);
 
@@ -59,8 +59,8 @@ namespace RM
 	public:
 		static bool Has(const std::string& shaderName);
 		static void Add(const Ref<Shader>& shader);
-		static void Load(const std::string& shaderName, const std::string& injection = "");
-		static void Recompile(const std::string& shaderName, const std::string& injection);
+		static void Load(const std::string& shaderName, const std::string& defineInjection = "", const std::string& proceduralInjection = "");
+		static void Recompile(const std::string& shaderName, const std::string& defineInjection = "", const std::string& proceduralInjection = "");
 
 		static const Ref<Shader>& Get(const std::string& name);
 

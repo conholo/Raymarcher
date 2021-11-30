@@ -15,6 +15,7 @@
 #include <utility>
 #include <memory>
 #include <functional>
+#include <filesystem>
 
 
 #include "Core/Memory.h"

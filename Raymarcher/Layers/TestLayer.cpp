@@ -15,165 +15,173 @@ TestLayer::~TestLayer()
 
 }
 
-static RM::Fractal Mausoleum()
+static RM::Ref<RM::Fractal> Mausoleum()
 {
-	const uint32_t iterations = 8;
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("Cemetery");
+	fractal->SetIterations(5);
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.34f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(3.28f, glm::vec3(-5.27, -0.34, 0.0)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateX>(90.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.42, 0.38, 0.19)));
+	fractal->SetEnd(5);
+	fractal->AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(2.0f)));
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModZero>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.34f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(90.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMinAbs>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(2.0f, glm::vec3(-6.27f, -1.5f, 0.0f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateX>(20.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.42, 0.38, 0.19)));
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(3.0f)));
-	
-	return fractal;
-}
-
-static RM::Fractal ButterweedHills()
-{
-	const uint32_t iterations = 30;
-
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModZero>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldAbs>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.5f, glm::vec3(-1.0f, -0.55f, -0.2f)));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModSum>(glm::vec3(0.5f, 0.3f, 0.0)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateX>(206.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(116.0f));
-
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Sphere>(RM::ColorType::ColorMod));
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
-static RM::Fractal TreeWorld()
+static RM::Ref<RM::Fractal> ButterweedHills()
 {
-	const uint32_t iterations = 30;
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("TheHills");
+	fractal->SetIterations(25);
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	uint32_t begin = 1;
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldAbs>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.5f, glm::vec3(-1.0f, -0.55f, -0.2f)));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModSum>(glm::vec3(0.5f, 0.3f, 0.0)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateX>(206.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateY>(116.0f));
+	fractal->SetEnd(5);
+	fractal->AddTransformation(RM::CreateRef<RM::Sphere>(RM::ColorType::ColorMod));
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldAbs>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 2.28f, 7.6f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.3f, glm::vec3(-2.0f, -4.8f, 0.0f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Left, 0.0f));
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
-static RM::Fractal TheHive()
+static RM::Ref<RM::Fractal> TreeWorld()
 {
-	const uint32_t iterations = 15;
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("TheLorax");
+	fractal->SetIterations(30);
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldAbs>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 2.28f, 7.6f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.3f, glm::vec3(-2.0f, -4.8f, 0.0f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Back, 0.0f));
+	fractal->SetEnd(6);
+	fractal->AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldAbs>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 2.28f, 7.6f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.5, glm::vec3(-2.5f, -5.5f, 0.5f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Back, 0.0f));
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
-static RM::Fractal GalacticPetal()
+static RM::Ref<RM::Fractal> TheHive()
 {
-	const uint32_t iterations = 15;
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("TheHive");
+	fractal->SetIterations(15);
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldAbs>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 2.28f, 7.6f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.5, glm::vec3(-2.5f, -5.5f, 0.5f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Back, 0.0f));
+	fractal->SetEnd(6);
+	fractal->AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldSierpinski>());
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 0.01f, 1.0f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.4f, glm::vec3(-2.5f, -10.5f, -5.25f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Up, 0.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateZ>(25.0f));
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
-static RM::Fractal Test()
+static RM::Ref<RM::Fractal> GalacticPetal()
 {
-	const uint32_t iterations = 15;
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("GalacticPetal");
+	fractal->SetIterations(15);
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModZero>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.25f, 0.01f, 1.0f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.9f, glm::vec3(-2.5f, -1.0f, -0.1f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Forward, 0.1f));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateZ>(20.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMin>(glm::vec3(2.0f, 0.01f, 0.1f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldBox>());
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.1f, glm::vec3(0.0f, -1.0f, -0.1f)));
-	fractal.AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(1.0f)));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModInfinity>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldSierpinski>());
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMinAbs>(glm::vec3(0.25f, 0.01f, 1.0f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.4f, glm::vec3(-2.5f, -10.5f, -5.25f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Up, 0.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateZ>(25.0f));
+	fractal->SetEnd(6);
+	fractal->AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(10.0f)));
+
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
-static RM::Fractal SierpinskiTetrahedron()
+static RM::Ref<RM::Fractal> Test()
+{
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("TestFractal");
+	fractal->SetIterations(15);
+
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateY>(25.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.25f, 0.01f, 1.0f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.9f, glm::vec3(-2.5f, -1.0f, -0.1f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldPlane>(RM::FoldPlane::FoldDirection::Forward, 0.1f));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateZ>(20.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMin>(glm::vec3(2.0f, 0.01f, 0.1f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldBox>());
+	fractal->SetEnd(8);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(1.1f, glm::vec3(0.0f, -1.0f, -0.1f)));
+	fractal->AddTransformation(RM::CreateRef<RM::Box>(RM::ColorType::ColorMod, glm::vec3(1.0f)));
+
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
+
+	return fractal;
+}
+
+static RM::Ref<RM::Fractal> SierpinskiTetrahedron()
+{
+
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("SierpinskiTetrahedron");
+	fractal->SetIterations(9);
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	fractal->SetBegin(1);
+	fractal->AddTransformation(RM::CreateRef<RM::FoldSierpinski>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(2.0f, glm::vec3(-1.0f)));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModSumAbs>(glm::vec3(0.2f, 0.5f, 0.1f)));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMin>(glm::vec3(0.8f, 0.1f, 0.1f), glm::vec3(-0.8f, 1.0f, 0.0f)));
+	fractal->SetEnd(4);
+	fractal->AddTransformation(RM::CreateRef<RM::Tetrahedron>(RM::ColorType::ColorMod));
+
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
+
+	return fractal;
+}
+
+static RM::Ref<RM::Fractal> AlienCube()
 {
 	const uint32_t iterations = 9;
 
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("AlienCube");
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
 	for (uint32_t i = 0; i < iterations; i++)
 	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldSierpinski>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(2.0f, glm::vec3(-1.0f)));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModSumAbs>(glm::vec3(0.2f, 0.5f, 0.1f)));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMin>(glm::vec3(0.8f, 0.1f, 0.1f), glm::vec3(-0.8f, 1.0f, 0.0f)));
+		fractal->AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.1f, 0.3f, 0.1f)));
+		fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+		fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(3.28f, glm::vec3(0.5f, 0.3f, 0.5f)));
+
+		fractal->AddTransformation(RM::CreateRef<RM::FoldBox>());
+		fractal->AddTransformation(RM::CreateRef<RM::FoldRotateX>(90.0f));
+		fractal->AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.01f, 0.4f, 0.8f)));
 	}
-	fractal.AddTransformation(RM::CreateRef<RM::Tetrahedron>(RM::ColorType::ColorMod));
-
-	return fractal;
-}
-
-static RM::Fractal AlienCube()
-{
-	const uint32_t iterations = 9;
-
-	RM::Fractal fractal("TestFractal");
-	fractal.AddTransformation(RM::CreateRef<RM::ColorModZero>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal.AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.1f, 0.3f, 0.1f)));
-		fractal.AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(3.28f, glm::vec3(0.5f, 0.3f, 0.5f)));
-
-		fractal.AddTransformation(RM::CreateRef<RM::FoldBox>());
-		fractal.AddTransformation(RM::CreateRef<RM::FoldRotateX>(90.0f));
-		fractal.AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.01f, 0.4f, 0.8f)));
-	}
-	fractal.AddTransformation(RM::CreateRef<RM::Sphere>(RM::ColorType::ColorMod));
+	fractal->AddTransformation(RM::CreateRef<RM::Sphere>(RM::ColorType::ColorMod));
 
 	return fractal;
 }
@@ -181,9 +189,7 @@ static RM::Fractal AlienCube()
 void TestLayer::OnAttach()
 {
 	m_Camera.SetPanSpeed(0.1f);
-	RM::Fractal fractal = ButterweedHills();
-	//std::string injection = fractal.Compile();
-	//RM::ShaderLibrary::Load("TestShaderFrag", injection);
+	RM::UI::FractalManagerUI::LoadFromDisk();
 }
 
 void TestLayer::OnDetach()
@@ -208,22 +214,11 @@ void TestLayer::OnEvent(RM::Event& event)
 
 void TestLayer::OnImGuiRender()
 {
-	ImGui::Begin("Fractals");
+	ImGui::Begin("Stats");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::End();
+
+	ImGui::Begin("Fractals");
 	RM::UI::FractalManagerUI::DrawFractalUI();
-
-	std::vector<RM::UI::FractalCompileData> readyFractalData = RM::UI::FractalManagerUI::GetReadyFractals();
-
-	for (auto data : readyFractalData)
-	{
-		if (ImGui::Button("Run Fractal"))
-		{
-			std::string injection = data.Fractal->CompileProcedural(data.Begin, data.End, data.Iterations);
-			if (RM::ShaderLibrary::Has("TestShaderFrag"))
-				RM::ShaderLibrary::Recompile("TestShaderFrag", injection);
-			else
-				RM::ShaderLibrary::Load("TestShaderFrag", injection);
-		}
-	}
 	ImGui::End();
 }

@@ -52,7 +52,7 @@ namespace RM
 		ShaderLibrary::Get(shader)->UploadUniformFloat("u_DeltaTime", Time::DeltaTime());
 		ShaderLibrary::Get(shader)->UploadUniformFloat2("u_ScreenResolution", screenResolution);
 		ShaderLibrary::Get(shader)->UploadUniformFloat2("u_MousePosition", mousePosition);
-		ShaderLibrary::Get(shader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjection());
+		ShaderLibrary::Get(shader)->UploadUniformMat4("u_InverseView", glm::inverse(camera.GetView()));
 		ShaderLibrary::Get(shader)->UploadUniformFloat3("u_CameraPosition", camera.GetPosition());
 		ShaderLibrary::Get(shader)->UploadUniformFloat3("u_CameraForward", camera.Forward());
 		RenderCommand::DrawIndexed(s_VAO);

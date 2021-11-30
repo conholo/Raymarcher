@@ -4,7 +4,7 @@
 #include "Fractal/ColorMods/ColorMod.h"
 #include "Fractal/IGLSLConvertable.h"
 
-#include <glm/glm.hpp>s
+#include <glm/glm.hpp>
 
 namespace RM
 {

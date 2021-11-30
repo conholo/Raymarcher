@@ -1,0 +1,28 @@
+Fractal: Cemetery
+Iteration Data:
+  Begin: 1
+  End: 5
+  Iterations: 5
+Transformations:
+  - Type: ColorModZero
+  - Type: FoldBox
+    Fields:
+      Range: [0.340000004, 0.340000004, 0.340000004]
+  - Type: FoldMenger
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 3.27999997
+      Translation: [-5.26999998, -0.340000004, 0]
+  - Type: FoldRotateX
+    Fields:
+      Radians: 1.57079637
+  - Type: ColorModMax
+    Fields:
+      Scale: [0.419999987, 0.379999995, 0.189999998]
+      Origin: [0, 0, 0]
+  - Type: Box
+    Fields:
+      Scale: [2, 2, 2]
+      Offset: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

@@ -1,0 +1,26 @@
+Fractal: SierpinskiTetrahedron
+Iteration Data:
+  Begin: 1
+  End: 4
+  Iterations: 9
+Transformations:
+  - Type: ColorModZero
+  - Type: FoldSierpinski
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 2
+      Translation: [-1, -1, -1]
+  - Type: ColorModSumAbs
+    Fields:
+      Scale: [0.200000003, 0.5, 0.100000001]
+      Origin: [0, 0, 0]
+  - Type: ColorModMin
+    Fields:
+      Scale: [0.800000012, 0.100000001, 0.100000001]
+      Origin: [-0.800000012, 1, 0]
+  - Type: Tetrahedron
+    Fields:
+      Radius: 1
+      Center: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

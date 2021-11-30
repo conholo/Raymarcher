@@ -21,9 +21,9 @@ namespace RM
 				
 			void DisplayFractalViewer();
 
-			void AddColorMod(const std::string& name);
-			void AddFold(const std::string& name);
-			void AddGeometry(const std::string& name);
+			void AddColorMod(const std::string& name, const Ref<IGLSLConvertable>& convertable = nullptr);
+			void AddFold(const std::string& name, const Ref<IGLSLConvertable>& convertable = nullptr);
+			void AddGeometry(const std::string& name, const Ref<IGLSLConvertable>& convertable = nullptr);
 
 			bool CanCompile() const { return m_Finalized; }
 			std::string GetName() const { return m_Fractal->GetName(); }
@@ -32,6 +32,10 @@ namespace RM
 			uint32_t GetBegin() const { return m_IterationIndexBegin; }
 			uint32_t GetEnd() const { return m_IterationIndexEnd; }
 			uint32_t GetIterations() const { return m_IterationCount; }
+
+			void SetBegin(uint32_t begin) { m_IterationIndexBegin = begin; }
+			void SetEnd(uint32_t end) { m_IterationIndexEnd = end; }
+			void SetIterationCount(uint32_t iterations) { m_IterationCount = iterations; }
 
 			std::vector<Ref<FractalComponentEditorUI>> GetComponentEditors() const { return m_ComponentEditors; }
 
