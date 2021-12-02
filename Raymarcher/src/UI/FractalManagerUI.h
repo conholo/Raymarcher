@@ -23,6 +23,7 @@ namespace RM
 			static void AddFractal(const Ref<Fractal>& fractal);
 			static void DeleteFractal();
 			static void DrawFractalUI();
+			static void RequestReload(const Ref<Fractal>& fractal);
 
 		private:
 			static bool s_EditorOpen;

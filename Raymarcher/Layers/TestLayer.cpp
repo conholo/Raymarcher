@@ -170,24 +170,31 @@ static RM::Ref<RM::Fractal> AlienCube()
 	const uint32_t iterations = 9;
 
 	RM::Ref<RM::Fractal> fractal = RM::CreateRef<RM::Fractal>("AlienCube");
-	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
-	for (uint32_t i = 0; i < iterations; i++)
-	{
-		fractal->AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.1f, 0.3f, 0.1f)));
-		fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
-		fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(3.28f, glm::vec3(0.5f, 0.3f, 0.5f)));
+	fractal->SetIterations(9);
 
-		fractal->AddTransformation(RM::CreateRef<RM::FoldBox>());
-		fractal->AddTransformation(RM::CreateRef<RM::FoldRotateX>(90.0f));
-		fractal->AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.01f, 0.4f, 0.8f)));
-	}
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModZero>());
+	fractal->SetBegin(1);
+
+	fractal->AddTransformation(RM::CreateRef<RM::FoldBox>(glm::vec3(0.1f, 0.3f, 0.1f)));
+	fractal->AddTransformation(RM::CreateRef<RM::FoldMenger>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldScaleTranslate>(3.28f, glm::vec3(0.5f, 0.3f, 0.5f)));
+
+	fractal->AddTransformation(RM::CreateRef<RM::FoldBox>());
+	fractal->AddTransformation(RM::CreateRef<RM::FoldRotateX>(90.0f));
+	fractal->AddTransformation(RM::CreateRef<RM::ColorModMax>(glm::vec3(0.01f, 0.4f, 0.8f)));
+	fractal->SetEnd(6);
 	fractal->AddTransformation(RM::CreateRef<RM::Sphere>(RM::ColorType::ColorMod));
+
+	RM::CompiledFractalSrc src = fractal->CompileProcedural();
+	RM::ShaderLibrary::Load("TestShaderFrag", src.DefineSrc, src.ProceduralSrc);
 
 	return fractal;
 }
 
 void TestLayer::OnAttach()
 {
+	auto fractal = GalacticPetal();
+	RM::FractalSerializer::Serialize(fractal);
 	m_Camera.SetPanSpeed(0.1f);
 	RM::UI::FractalManagerUI::LoadFromDisk();
 }

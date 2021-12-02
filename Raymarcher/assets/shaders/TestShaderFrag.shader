@@ -10,6 +10,14 @@ uniform mat4 u_InverseView;
 uniform vec3 u_CameraPosition;
 uniform vec3 u_CameraForward;
 
+uniform int u_DoRotationX;
+uniform int u_DoRotationY;
+uniform int u_DoRotationZ;
+
+uniform float u_RotationXSpeed;
+uniform float u_RotationYSpeed;
+uniform float u_RotationZSpeed;
+
 #define PI 3.14159265359
 
 float Random(float s, float minV, float maxV)
@@ -122,7 +130,7 @@ float CalculateSoftShadow(vec4 rayOrigin, vec3 rayDirection, float minT, float m
 	float result = 1.0;
 	float t = minT;
 
-	for (int i = 0; i < 24; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		float h = DE(rayOrigin + vec4(rayDirection, 0.0) * t);
 		float s = clamp(SHADOW_SHARPNESS * h / t, 0.0, 1.0);
@@ -233,8 +241,6 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 		vec3 normal = CalculateNormal(position, MIN_DISTANCE * 10.0);
 		vec3 reflected = reflect(ray.xyz, normal);
 
-		float k = 1.0;
-
 		vec3 halfVector = normalize(light - ray.xyz);
 
 		float ambientOcclusion = CalculateAO(position, normal);
@@ -245,12 +251,12 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 			diffuse *= CalculateSoftShadow(position, light, 0.02, 2.5);
 #endif
 
-			float specular = pow(max(dot(halfVector, normal), 0.0), 4.0f * 4.0f);
+			float specular = pow(max(dot(halfVector, normal), 0.0), SPECULAR_HIGHTLIGHT * SPECULAR_HIGHTLIGHT);
 			specular *= diffuse;
 			specular *= 0.04 + 0.96 * pow(clamp(1.0 - dot(halfVector, light), 0.0, 1.0), 5.0);
 
 			color += originalColor * lightColor * 2.20 * diffuse * vec3(1.30, 1.00, 0.70);
-			color += 5.0 * specular * vec3(1.30, 1.00, 0.70) * k;
+			color += 5.0 * specular * vec3(1.30, 1.00, 0.70);
 		}
 
 		{
@@ -260,11 +266,11 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 			specular *= diffuse;
 			specular *= 0.04 + 0.96 * pow(clamp(1.0 + dot(normal, vec3(ray.xyz)), 0.0, 1.0), 5.0);
 
-#if SHADOWS_ENABLED
-			specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
-#endif
+			if(specular > 0.001)
+				specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
+
 			color += color * 0.60 * diffuse * vec3(0.40, 0.60, 1.15);
-			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) * k;
+			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) ;
 		}
 
 		//sss

@@ -1,0 +1,32 @@
+Fractal: GalacticPetal
+Iteration Data:
+  Begin: 1
+  End: 6
+  Iterations: 15
+Transformations:
+  - Type: ColorModInfinity
+  - Type: FoldRotateY
+    Fields:
+      Radians: 0.436332315
+  - Type: FoldSierpinski
+  - Type: ColorModMinAbs
+    Fields:
+      Scale: [0.25, 0.00999999978, 1]
+      Origin: [0, 0, 0]
+  - Type: FoldScaleTranslate
+    Fields:
+      Scale: 1.39999998
+      Translation: [-2.5, -10.5, -5.25]
+  - Type: FoldPlane
+    Fields:
+      Factor: 0
+      Direction: 2
+  - Type: FoldRotateZ
+    Fields:
+      Radians: 0.436332315
+  - Type: Box
+    Fields:
+      Scale: [10, 10, 10]
+      Offset: [0, 0, 0]
+      Color: [1, 1, 1]
+      ColorType: 1

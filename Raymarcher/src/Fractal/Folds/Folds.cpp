@@ -84,17 +84,23 @@ namespace RM
 
 	std::string FoldRotateX::TransformationToGLSL() const
 	{
-		return "\tRotationXFold(position, " + std::to_string(glm::sin(m_Radians)) + ", " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		std::stringstream ss;
+		ss << "\tRotationXFold(position, u_DoRotationX == 1 ? sin(u_ElapsedTime * u_RotationXSpeed * 2.0 * PI) : " + std::to_string(glm::sin(m_Radians)) + ", u_DoRotationX == 1 ? cos(u_ElapsedTime * u_RotationXSpeed * 2.0 * PI) : " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		return ss.str();
 	}
 
 	std::string FoldRotateY::TransformationToGLSL() const
 	{
-		return "\tRotationYFold(position, " + std::to_string(glm::sin(m_Radians)) + ", " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		std::stringstream ss;
+		ss << "\tRotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : " + std::to_string(glm::sin(m_Radians)) + ", u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		return ss.str();
 	}
 
 	std::string FoldRotateZ::TransformationToGLSL() const
 	{
-		return "\tRotationZFold(position, " + std::to_string(glm::sin(m_Radians)) + ", " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		std::stringstream ss;
+		ss << "\tRotationZFold(position, u_DoRotationZ == 1 ? sin(u_ElapsedTime * u_RotationZSpeed * 2.0 * PI) : " + std::to_string(glm::sin(m_Radians)) + ", u_DoRotationZ == 1 ? cos(u_ElapsedTime * u_RotationZSpeed * 2.0 * PI) : " + std::to_string(glm::cos(m_Radians)) + ");\n";
+		return ss.str();
 	}
 
 	std::string FoldRepeatX::TransformationToGLSL() const

@@ -10,6 +10,14 @@ uniform mat4 u_InverseView;
 uniform vec3 u_CameraPosition;
 uniform vec3 u_CameraForward;
 
+uniform int u_DoRotationX;
+uniform int u_DoRotationY;
+uniform int u_DoRotationZ;
+
+uniform float u_RotationXSpeed;
+uniform float u_RotationYSpeed;
+uniform float u_RotationZSpeed;
+
 #define PI 3.14159265359
 
 float Random(float s, float minV, float maxV)
@@ -32,7 +40,7 @@ float Random(float s, float minV, float maxV)
 #define DOF_DISTANCE 50.000000
 #define EXPOSURE 1.000000
 #define LOD_MULTIPLIER 50.000000
-#define FOV 45.000000
+#define FOV 60.000000
 #define MAX_DISTANCE 50.000000
 #define MAX_MARCHES 1000.000000
 #define MIN_DISTANCE 0.000010
@@ -42,12 +50,12 @@ float Random(float s, float minV, float maxV)
 #define SUN_SIZE 0.005000
 #define SUN_SHARPNESS 2.000000
 #define AO_COLOR_DELTA vec3(0.800000, 0.800000, 0.800000)
-#define GLOW_COLOR_DELTA vec3(-0.200000, 0.500000, -0.200000)
+#define GLOW_COLOR_DELTA vec3(-0.200000, 0.100000, -0.200000)
 #define BG_COLOR vec3(0.700000, 0.700000, 0.900000)
 #define LIGHT_POSITION vec3(100.000000, 200.000000, 10.000000)
 #define LIGHT_COLOR vec3(1.000000, 1.000000, 1.000000)
-#define DE DE_New
-#define CE CE_New
+#define DE DE_TheLorax
+#define CE CE_TheLorax
 
 //Defines
 
@@ -139,187 +147,412 @@ void RotationZFold(inout vec4 z, float s, float c)
 
 //DE/CE Begin
 
-float DE_New(vec4 position)
+float DE_TheLorax(vec4 position)
 {
 	vec4 o = position;
 	float d = 1e20;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	d = min(d, DE_Sphere(position - vec4(vec3(0.000000, 0.000000, 0.000000), 0.0), 3.000000));
+	d = min(d, DE_Box(position - vec4(vec3(0.000000, 0.000000, 0.000000), 0.0), vec3(10.000000, 10.000000, 10.000000)));
 	return d;
 }
-vec4 CE_New(vec4 position)
+vec4 CE_TheLorax(vec4 position)
 {
 	vec4 o = position;
 	vec4 color = vec4(1e20);
 	vec4 newColor;
 	vec3 orbit = vec3(1e20);
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	RotationXFold(position, 0.965926, 0.258819);
-SierpinskiFold(position);
-	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(0.800000, 0.200000, 0.000000)));
-	position *= 1.500000;
-	position.xyz += vec3(-3.000000, -1.000000, 0.000000);
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
+	position.z = -abs(position.z + 0.000000) - 0.000000;
+	RotationYFold(position, u_DoRotationY == 1 ? sin(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : -0.870102, u_DoRotationY == 1 ? cos(u_ElapsedTime * u_RotationYSpeed * 2.0 * PI) : 0.492872);
+	orbit = min(orbit, abs((position.xyz - vec3(0.000000, 0.000000, 0.000000)) * vec3(-2.000000, 0.200000, -2.000000)));
+	AbsFold(position, vec3(0.000000, 0.000000, 0.000000));
+	MengerFold(position);
+	position *= 1.300000;
+	position.xyz += vec3(-2.000000, -4.800000, 0.000000);
 	position.z = -abs(position.z + 0.000000) - 0.000000;
 	position.z = -abs(position.z + 0.000000) - 0.000000;
-	newColor = vec4(orbit, DE_Sphere(position - vec4(vec3(0.000000, 0.000000, 0.000000), 0.0), 3.000000));
+	newColor = vec4(orbit, DE_Box(position - vec4(vec3(0.000000, 0.000000, 0.000000), 0.0), vec3(10.000000, 10.000000, 10.000000)));
 	if (newColor.w < color.w) { color = newColor; }
 	return color;
 }
@@ -335,7 +568,7 @@ float CalculateSoftShadow(vec4 rayOrigin, vec3 rayDirection, float minT, float m
 	float result = 1.0;
 	float t = minT;
 
-	for (int i = 0; i < 24; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		float h = DE(rayOrigin + vec4(rayDirection, 0.0) * t);
 		float s = clamp(SHADOW_SHARPNESS * h / t, 0.0, 1.0);
@@ -446,8 +679,6 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 		vec3 normal = CalculateNormal(position, MIN_DISTANCE * 10.0);
 		vec3 reflected = reflect(ray.xyz, normal);
 
-		float k = 1.0;
-
 		vec3 halfVector = normalize(light - ray.xyz);
 
 		float ambientOcclusion = CalculateAO(position, normal);
@@ -458,12 +689,12 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 			diffuse *= CalculateSoftShadow(position, light, 0.02, 2.5);
 #endif
 
-			float specular = pow(max(dot(halfVector, normal), 0.0), 4.0f * 4.0f);
+			float specular = pow(max(dot(halfVector, normal), 0.0), SPECULAR_HIGHTLIGHT * SPECULAR_HIGHTLIGHT);
 			specular *= diffuse;
 			specular *= 0.04 + 0.96 * pow(clamp(1.0 - dot(halfVector, light), 0.0, 1.0), 5.0);
 
 			color += originalColor * lightColor * 2.20 * diffuse * vec3(1.30, 1.00, 0.70);
-			color += 5.0 * specular * vec3(1.30, 1.00, 0.70) * k;
+			color += 5.0 * specular * vec3(1.30, 1.00, 0.70);
 		}
 
 		{
@@ -473,11 +704,11 @@ vec4 Scene(vec4 origin, inout vec4 ray, float vignette, float totalDistance)
 			specular *= diffuse;
 			specular *= 0.04 + 0.96 * pow(clamp(1.0 + dot(normal, vec3(ray.xyz)), 0.0, 1.0), 5.0);
 
-#if SHADOWS_ENABLED
-			specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
-#endif
+			if(specular > 0.001)
+				specular *= CalculateSoftShadow(position, reflected, 0.02, 2.5);
+
 			color += color * 0.60 * diffuse * vec3(0.40, 0.60, 1.15);
-			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) * k;
+			color += 2.00 * specular * vec3(0.40, 0.60, 1.30) ;
 		}
 
 		//sss

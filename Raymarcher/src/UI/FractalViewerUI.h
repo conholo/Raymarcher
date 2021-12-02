@@ -47,6 +47,25 @@ namespace RM
 			int m_IterationIndexEnd = 0;
 			int m_IterationCount = 1;
 
+			bool m_HasRotationX = false;
+			bool m_HasRotationY = false;
+			bool m_HasRotationZ = false;
+
+			glm::vec3 m_IntializedRadians;
+			glm::vec3 m_RotationSpeedValues = glm::vec3(0.0);
+
+			Ref<FoldRotateX> m_XRotator;
+			Ref<FoldRotateY> m_YRotator;
+			Ref<FoldRotateZ> m_ZRotator;
+
+			bool m_DoRotationX = false;
+			bool m_DoRotationY = false;
+			bool m_DoRotationZ = false;
+
+			bool m_XUpdated = false;
+			bool m_YUpdated = false;
+			bool m_ZUpdated = false;
+
 			std::vector<Ref<FractalComponentEditorUI>> m_ComponentEditors;
 
 			static bool s_EditorOpen;

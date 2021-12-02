@@ -27,6 +27,8 @@ namespace RM
 				viewer->SetIterationCount(fractal->GetIterations());
 				s_Views.push_back(viewer);
 			}
+
+			std::cout << "awsdf" << std::endl;
 		}
 
 		void FractalManagerUI::CreateFractal(const std::string& fractalName)
@@ -112,6 +114,12 @@ namespace RM
 
 				ImGui::TreePop();
 			}
+		}
+
+		void FractalManagerUI::RequestReload(const Ref<Fractal>& fractal)
+		{
+			RM::CompiledFractalSrc injection = fractal->CompileProcedural();
+			RM::ShaderLibrary::Recompile("TestShaderFrag", injection.DefineSrc, injection.ProceduralSrc);
 		}
 	}
 }

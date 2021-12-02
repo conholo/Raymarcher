@@ -2,6 +2,9 @@
 #include "UI/FractalViewerUI.h"
 #include "Renderer/Shader.h"
 #include <imgui/imgui.h>
+#include "Core/Time.h"
+#include "UI/FractalManagerUI.h"
+#define PI 3.14159265359
 
 namespace RM
 {
@@ -125,6 +128,111 @@ namespace RM
 
 					if (value != vec3Define.second)
 						defines.Vec3Defines()[vec3Define.first] = value;
+				}
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNodeEx("Animation"))
+			{
+				if (!m_HasRotationX && !m_HasRotationY && !m_HasRotationZ)
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text("Add a rotation fold to the fractal to toggle animation settings.");
+					ImGui::EndTooltip();
+				}
+
+				if (m_HasRotationX)
+				{
+					bool doX = m_DoRotationX;
+					ImGui::Checkbox("Rotate X", &doX);
+					if (doX != m_DoRotationX)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformInt("u_DoRotationX", doX ? 1 : 0);
+						m_DoRotationX = doX;
+						m_XUpdated = true;
+					}
+
+					float xSpeed = m_RotationSpeedValues.x;
+					ImGui::DragFloat("Rotation Speed X", &xSpeed, 0.001, -10.0f, 10.0f);
+					if (xSpeed != m_RotationSpeedValues.x)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformFloat("u_RotationXSpeed", xSpeed);
+						m_RotationSpeedValues.x = xSpeed;
+						m_XUpdated = true;
+					}
+				}
+
+				if (m_HasRotationY)
+				{
+					bool doY = m_DoRotationY;
+					ImGui::Checkbox("Rotate Y", &doY);
+					if (doY != m_DoRotationY)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformInt("u_DoRotationY", doY ? 1 : 0);
+						m_DoRotationY = doY;
+						m_YUpdated = true;
+					}
+
+					float ySpeed = m_RotationSpeedValues.y;
+					ImGui::DragFloat("Rotation Speed Y", &ySpeed, 0.001, -10.0f, 10.0f);
+					if (ySpeed != m_RotationSpeedValues.y)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformFloat("u_RotationYSpeed", ySpeed);
+						m_RotationSpeedValues.y = ySpeed;
+						m_YUpdated = true;
+					}
+				}
+
+
+				if (m_HasRotationZ)
+				{
+					bool doZ = m_DoRotationZ;
+					ImGui::Checkbox("Rotate Z", &doZ);
+					if (doZ != m_DoRotationZ)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformInt("u_DoRotationZ", doZ ? 1 : 0);
+						m_DoRotationZ = doZ;
+						m_ZUpdated = true;
+					}
+
+					float zSpeed = m_RotationSpeedValues.z;
+					ImGui::DragFloat("Rotation Speed Z", &zSpeed, 0.001, -10.0f, 10.0f);
+					if (zSpeed != m_RotationSpeedValues.z)
+					{
+						ShaderLibrary::Get("TestShaderFrag")->Bind();
+						ShaderLibrary::Get("TestShaderFrag")->UploadUniformFloat("u_RotationZSpeed", zSpeed);
+						m_RotationSpeedValues.z = zSpeed;
+						m_ZUpdated = true;
+					}
+				}
+
+				if (ImGui::Button("Freeze"))
+				{
+					if (m_HasRotationX && m_XUpdated)
+						m_XRotator->GetRadians() = Time::Elapsed() * m_RotationSpeedValues.x * 2.0 * PI;
+
+					if (m_HasRotationY && m_YUpdated)
+						m_YRotator->GetRadians() = Time::Elapsed() * m_RotationSpeedValues.y * 2.0 * PI;
+
+					if (m_HasRotationZ && m_ZUpdated)
+						m_ZRotator->GetRadians() = Time::Elapsed() * m_RotationSpeedValues.z * 2.0 * PI;
+
+					m_RotationSpeedValues = glm::vec3(0.0f);
+					m_DoRotationX = false;
+					m_DoRotationY = false;
+					m_DoRotationZ = false;
+
+					m_XUpdated = false;
+					m_YUpdated = false;
+					m_ZUpdated = false;
+
+					FractalManagerUI::RequestReload(m_Fractal);
 				}
 
 				ImGui::TreePop();
@@ -483,24 +591,42 @@ namespace RM
 			}
 			else if (name == FoldRotateX::ToString())
 			{
+				m_HasRotationX = true;
 				auto reference = std::dynamic_pointer_cast<FoldRotateX>(convertable);
 				Ref<FoldRotateXUI> fold = CreateRef<FoldRotateXUI>(m_ComponentCount++, 
 					reference == nullptr ? CreateRef<FoldRotateX>() : reference);
 				m_ComponentEditors.push_back(fold);
+
+				if (reference != nullptr)
+					m_XRotator = reference;
+				else if (m_XRotator == nullptr)
+					m_XRotator = std::dynamic_pointer_cast<FoldRotateX>(fold->GetConvertable());
 			}
 			else if (name == FoldRotateY::ToString())
 			{
+				m_HasRotationY = true;
 				auto reference = std::dynamic_pointer_cast<FoldRotateY>(convertable);
 				Ref<FoldRotateYUI> fold = CreateRef<FoldRotateYUI>(m_ComponentCount++,
 					reference == nullptr ? CreateRef<FoldRotateY>() : reference);
 				m_ComponentEditors.push_back(fold);
+
+				if (reference != nullptr)
+					m_YRotator = reference;
+				else if (m_YRotator == nullptr)
+					m_YRotator = std::dynamic_pointer_cast<FoldRotateY>(fold->GetConvertable());
 			}
 			else if (name == FoldRotateZ::ToString())
 			{
+				m_HasRotationZ = true;
 				auto reference = std::dynamic_pointer_cast<FoldRotateZ>(convertable);
 				Ref<FoldRotateZUI> fold = CreateRef<FoldRotateZUI>(m_ComponentCount++, 
 					reference == nullptr ? CreateRef<FoldRotateZ>() : reference);
 				m_ComponentEditors.push_back(fold);
+
+				if (reference != nullptr)
+					m_ZRotator = reference;
+				else if (m_ZRotator == nullptr)
+					m_ZRotator = std::dynamic_pointer_cast<FoldRotateZ>(fold->GetConvertable());
 			}
 			else if (name == FoldScaleTranslate::ToString())
 			{
